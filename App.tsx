@@ -80,8 +80,16 @@ export default function App() {
             tabBarIcon: ({ color, size }) => {
               return <Ionicons name="home-outline" size={size} color={color} />;
             },
+            headerTitleStyle: {
+              marginLeft: 20,
+            },
+
             tabBarLabel: "Home",
             headerTitle: "Hello XYZ",
+            headerStyle: {
+              height: 90, // Set the custom height for the header
+              backgroundColor: "white",
+            },
           }}
         />
         <bottomTab.Screen
@@ -103,6 +111,7 @@ export default function App() {
               return <AntDesign name="hearto" size={size} color={color} />;
             },
             tabBarLabel: "Favourites",
+            headerTitleAlign: "center",
           }}
         />
         <bottomTab.Screen
@@ -115,6 +124,7 @@ export default function App() {
               );
             },
             tabBarLabel: "Cart",
+            headerTitleAlign: "center",
           }}
         />
         <bottomTab.Screen

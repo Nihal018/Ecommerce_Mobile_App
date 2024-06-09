@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 
 export default function Profile({ navigation }) {
   return (
-    <View>
+    <View className="bg-white w-full h-full">
       <Text>Profile Screen</Text>
     </View>
   );

@@ -10,7 +10,7 @@ export default function All({ navigation }) {
       <View className="mx-5 mt-4">
         <Text className="text-xl">Recommended for you</Text>
       </View>
-      <CardList />
+      <CardList numColumns={2} />
     </View>
   );
 }

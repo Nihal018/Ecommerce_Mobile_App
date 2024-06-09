@@ -15,10 +15,7 @@ type Cat = {
 
 function renderListItem(cat: Cat) {
   return (
-    <View
-      className="flex-1 h-10 mx-6 my-2 pb-4 "
-      style={styles.listItemContainer}
-    >
+    <View className="flex-1 h-12 mx-6  " style={styles.listItemContainer}>
       <Pressable
         style={({ pressed }) => [
           styles.buttonContainer,

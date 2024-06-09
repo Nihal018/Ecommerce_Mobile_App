@@ -2,25 +2,16 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Items } from "../data/dummy-data";
 import Card from "./Card";
 
-export default function CardList() {
+export default function CardList({ numColumns }: { numColumns: number }) {
   return (
-    <View className="flex-1 ">
+    <View className="flex-1 align-middle mx-2 mt-2">
       <FlatList
         data={Items}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <Card item={item} />}
-        numColumns={2}
-        initialNumToRender={8}
+        numColumns={numColumns}
+        initialNumToRender={10}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

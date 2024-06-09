@@ -16,10 +16,7 @@ const { width } = Dimensions.get("window");
 
 function renderListItem(item: Item) {
   return (
-    <View
-      style={{ width: width, height: 160 }}
-      className="border-2 rounded-3xl mx-6  "
-    >
+    <View style={{ width: width, height: 160 }} className="">
       <Pressable
         style={({ pressed }) => [
           styles.itemContainer,
@@ -36,7 +33,7 @@ function renderListItem(item: Item) {
             resizeMode="contain"
           />
         </View>
-        <View className="my-4 mr-4 justify ">
+        <View className="mb-6 mr-2">
           <Text className="font-bold text-lg">{item.category}</Text>
           <Text className="text-red-600 text-lg"> ${item.cost}</Text>
           <Text className="text-md font-semibold ">{item.description}</Text>
@@ -76,18 +73,22 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   imageContainer: {
-    marginLeft: 10,
+    marginBottom: 20,
   },
   pressed: {
     opacity: 0.5,
   },
   itemContainer: {
     flex: 1,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 20,
+    marginHorizontal: 20,
     flexDirection: "row",
     overflow: "hidden",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "",
-    width: width,
+    backgroundColor: "rgb(229, 231, 235)",
+    paddingHorizontal: 20,
   },
 });
