@@ -1,8 +1,9 @@
+import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import Browse from "./screens/Browse";
+import Browse from "./screens/BrowseOverview/Browse";
 import Favourites from "./screens/Favourites";
 import Cart from "./screens/Cart";
 import Profile from "./screens/Profile";
@@ -15,9 +16,30 @@ import Drones from "./screens/HomeOverview/Drones";
 import Gaming from "./screens/HomeOverview/Gaming";
 import PC from "./screens/HomeOverview/PC";
 import Video from "./screens/HomeOverview/Video";
+import { createStackNavigator } from "@react-navigation/stack";
+import ItemCategory from "./screens/BrowseOverview/ItemCategory";
+import ItemDetails from "./screens/BrowseOverview/ItemDetails";
+import SignUp from "./screens/AuthScreens/SignUp";
+import Login from "./screens/AuthScreens/Login";
+import { useContext, useState } from "react";
+import AuthContextProvider, { AuthContext } from "./store/auth-context";
+import { SQLiteProvider } from "expo-sqlite";
+import ItemsContextProvider, { init } from "./store/item-context";
+import UsersContextProvider from "./store/user-context";
 
 const bottomTab = createBottomTabNavigator();
 const topTab = createMaterialTopTabNavigator();
+const Stack = createStackNavigator();
+const AuthStack = createStackNavigator();
+
+function AuthScreens() {
+  return (
+    <AuthStack.Navigator initialRouteName="Login" screenOptions={{}}>
+      <AuthStack.Screen name="Login" component={Login} />
+      <AuthStack.Screen name="SignUp" component={SignUp} />
+    </AuthStack.Navigator>
+  );
+}
 
 function HomeTabs() {
   return (
@@ -61,86 +83,145 @@ function HomeTabs() {
   );
 }
 
+function BrowseOverview() {
+  return (
+    <Stack.Navigator screenOptions={{}}>
+      <Stack.Screen
+        name="Browse"
+        component={Browse}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen name="ItemCategory" component={ItemCategory} />
+      <Stack.Screen name="ItemDetails" component={ItemDetails} />
+    </Stack.Navigator>
+  );
+}
+
+function Navigation() {
+  const authCtx = useContext(AuthContext);
+
+  return (
+    <SQLiteProvider databaseName="Ecommerce.db" onInit={init}>
+      <UsersContextProvider>
+        <ItemsContextProvider>
+          <NavigationContainer>
+            <StatusBar style="dark" />
+            <bottomTab.Navigator
+              initialRouteName="HomeTabs"
+              screenOptions={{
+                tabBarActiveTintColor: "black",
+                tabBarInactiveTintColor: "grey",
+                tabBarLabelPosition: "below-icon",
+              }}
+            >
+              <bottomTab.Screen
+                name="HomeTabs"
+                component={HomeTabs}
+                options={{
+                  tabBarIcon: ({ color, size }) => {
+                    return (
+                      <Ionicons name="home-outline" size={size} color={color} />
+                    );
+                  },
+                  headerTitleStyle: {
+                    marginLeft: 20,
+                  },
+
+                  tabBarLabel: "Home",
+                  headerTitle: "Hello XYZ",
+                  headerStyle: {
+                    height: 90, // Set the custom height for the header
+                    backgroundColor: "white",
+                  },
+                }}
+              />
+              <bottomTab.Screen
+                name="BrowseOverview"
+                component={BrowseOverview}
+                options={{
+                  tabBarIcon: ({ color, size }) => {
+                    return (
+                      <AntDesign name="search1" size={size} color={color} />
+                    );
+                  },
+                  tabBarLabel: "Browse",
+                  headerShown: false,
+                }}
+              />
+              <bottomTab.Screen
+                name="Favourites"
+                component={Favourites}
+                options={{
+                  tabBarIcon: ({ color, size }) => {
+                    return (
+                      <AntDesign name="hearto" size={size} color={color} />
+                    );
+                  },
+                  tabBarLabel: "Favourites",
+                  headerTitleAlign: "center",
+                }}
+              />
+              <bottomTab.Screen
+                name="Cart"
+                component={Cart}
+                options={{
+                  tabBarIcon: ({ color, size }) => {
+                    return (
+                      <AntDesign
+                        name="shoppingcart"
+                        size={size}
+                        color={color}
+                      />
+                    );
+                  },
+                  tabBarLabel: "Cart",
+                  headerTitleAlign: "center",
+                }}
+              />
+              {authCtx.isAuthenticated && (
+                <bottomTab.Screen
+                  name="Profile"
+                  component={Profile}
+                  options={{
+                    tabBarIcon: ({ color, size }) => {
+                      return (
+                        <Ionicons
+                          name="person-outline"
+                          size={size}
+                          color={color}
+                        />
+                      );
+                    },
+                    tabBarLabel: "Profile",
+                  }}
+                />
+              )}
+              {!authCtx.isAuthenticated && (
+                <bottomTab.Screen
+                  name="AuthScreens"
+                  component={AuthScreens}
+                  options={{
+                    headerShown: false,
+                    tabBarLabel: "Login",
+                    tabBarIconStyle: { display: "none" },
+                  }}
+                />
+              )}
+            </bottomTab.Navigator>
+          </NavigationContainer>
+        </ItemsContextProvider>
+      </UsersContextProvider>
+    </SQLiteProvider>
+  );
+}
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <StatusBar style="dark" />
-      <bottomTab.Navigator
-        initialRouteName="HomeTabs"
-        screenOptions={{
-          tabBarActiveTintColor: "black",
-          tabBarInactiveTintColor: "grey",
-          tabBarLabelPosition: "below-icon",
-        }}
-      >
-        <bottomTab.Screen
-          name="HomeTabs"
-          component={HomeTabs}
-          options={{
-            tabBarIcon: ({ color, size }) => {
-              return <Ionicons name="home-outline" size={size} color={color} />;
-            },
-            headerTitleStyle: {
-              marginLeft: 20,
-            },
-
-            tabBarLabel: "Home",
-            headerTitle: "Hello XYZ",
-            headerStyle: {
-              height: 90, // Set the custom height for the header
-              backgroundColor: "white",
-            },
-          }}
-        />
-        <bottomTab.Screen
-          name="Browse"
-          component={Browse}
-          options={{
-            tabBarIcon: ({ color, size }) => {
-              return <AntDesign name="search1" size={size} color={color} />;
-            },
-            tabBarLabel: "Browse",
-            headerShown: false,
-          }}
-        />
-        <bottomTab.Screen
-          name="Favourites"
-          component={Favourites}
-          options={{
-            tabBarIcon: ({ color, size }) => {
-              return <AntDesign name="hearto" size={size} color={color} />;
-            },
-            tabBarLabel: "Favourites",
-            headerTitleAlign: "center",
-          }}
-        />
-        <bottomTab.Screen
-          name="Cart"
-          component={Cart}
-          options={{
-            tabBarIcon: ({ color, size }) => {
-              return (
-                <AntDesign name="shoppingcart" size={size} color={color} />
-              );
-            },
-            tabBarLabel: "Cart",
-            headerTitleAlign: "center",
-          }}
-        />
-        <bottomTab.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            tabBarIcon: ({ color, size }) => {
-              return (
-                <Ionicons name="person-outline" size={size} color={color} />
-              );
-            },
-            tabBarLabel: "Profile",
-          }}
-        />
-      </bottomTab.Navigator>
-    </NavigationContainer>
+    <AuthContextProvider>
+      <Navigation />
+    </AuthContextProvider>
   );
 }
 

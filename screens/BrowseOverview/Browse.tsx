@@ -13,7 +13,7 @@ type Cat = {
   category: string;
 };
 
-function renderListItem(cat: Cat) {
+function renderListItem(cat: Cat, pressHandler: (category: string) => void) {
   return (
     <View className="flex-1 h-12 mx-6  " style={styles.listItemContainer}>
       <Pressable
@@ -21,7 +21,9 @@ function renderListItem(cat: Cat) {
           styles.buttonContainer,
           pressed && styles.pressed,
         ]}
-        onPress={() => {}}
+        onPress={() => {
+          pressHandler(cat.category);
+        }}
       >
         <View>
           <Text className="font-bold text-lg">{cat.category}</Text>
@@ -34,12 +36,17 @@ function renderListItem(cat: Cat) {
   );
 }
 
-export default function Browse() {
+export default function Browse({ navigation }) {
   const categories: Cat[] = [
     { category: "Mobile" },
     { category: "Headphones" },
     { category: "Drones" },
   ];
+
+  const pressHandler = (category: string) => {
+    navigation.navigate("ItemCategory", { category: category });
+  };
+
   return (
     <View className="bg-white w-full h-full ">
       <View
@@ -57,7 +64,7 @@ export default function Browse() {
         <FlatList
           data={categories}
           keyExtractor={(cat) => cat.category}
-          renderItem={({ item }) => renderListItem(item)}
+          renderItem={({ item }) => renderListItem(item, pressHandler)}
         />
       </View>
     </View>

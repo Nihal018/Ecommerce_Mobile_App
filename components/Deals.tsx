@@ -1,7 +1,11 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import HorizontalView from "./HorizontalView";
 import { Items } from "../data/dummy-data";
-export default function Deals() {
+export default function Deals({
+  pressHandler,
+}: {
+  pressHandler: (itemId: number) => void;
+}) {
   return (
     <View>
       <View className="flex-row justify-between align-baseline mx-5 mt-5 ">
@@ -16,7 +20,7 @@ export default function Deals() {
         </Pressable>
       </View>
       <View className="mt-5">
-        <HorizontalView items={Items} />
+        <HorizontalView items={Items} pressHandler={pressHandler} />
       </View>
     </View>
   );

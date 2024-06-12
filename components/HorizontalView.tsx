@@ -14,7 +14,7 @@ import { useState } from "react";
 
 const { width } = Dimensions.get("window");
 
-function renderListItem(item: Item) {
+function renderListItem(item: Item, pressHandler: (itemId: number) => void) {
   return (
     <View style={{ width: width, height: 160 }} className="">
       <Pressable
@@ -22,7 +22,9 @@ function renderListItem(item: Item) {
           styles.itemContainer,
           pressed && styles.pressed,
         ]}
-        onPress={() => {}}
+        onPress={() => {
+          pressHandler(item.id);
+        }}
       >
         <View style={styles.imageContainer}>
           <Image
@@ -43,13 +45,19 @@ function renderListItem(item: Item) {
   );
 }
 
-export default function HorizontalView({ items }: { items: Item[] }) {
+export default function HorizontalView({
+  items,
+  pressHandler,
+}: {
+  items: Item[];
+  pressHandler: (itemId: number) => void;
+}) {
   return (
     <View className="">
       <FlatList
         data={items}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => renderListItem(item)}
+        renderItem={({ item }) => renderListItem(item, pressHandler)}
         horizontal={true}
         pagingEnabled={true}
         initialNumToRender={5}

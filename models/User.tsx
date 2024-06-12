@@ -1,29 +1,21 @@
-import { User } from "./User";
-
-export class Item {
+export class User {
   id: number;
   description: string;
   name: string;
   imageUri: string;
-  cost: number;
-  category: string;
-  vendorId: number;
+  email: string;
 
   constructor(
     id: number,
     name: string,
-    cost: number,
     imageUri: string,
     description: string,
-    category: string,
-    vendorId: number
+    email: string
   ) {
     this.id = id;
     this.imageUri = imageUri;
     this.description = description;
     this.name = name;
-    this.cost = cost;
-    this.category = category;
-    this.vendorId = vendorId;
+    this.email = email;
   }
 }
