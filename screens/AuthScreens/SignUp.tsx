@@ -31,7 +31,6 @@ export default function SignUp({ navigation }) {
         name: userName,
         email: email,
         description: "",
-        imageUri: "",
       });
 
       authCtx.authenticate(token);
@@ -40,6 +39,7 @@ export default function SignUp({ navigation }) {
         "Authentication failed",
         "Could not create user, please check your input and try again later."
       );
+      console.log(error);
       setIsAuthenticating(false);
     }
   }

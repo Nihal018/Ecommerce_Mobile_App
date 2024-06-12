@@ -8,7 +8,6 @@ export const UsersContext = createContext({
   users: [] as User[],
   addUser: (details: {
     name: string;
-    imageUri: string;
     description: string;
     email: string;
   }) => {},
@@ -69,7 +68,7 @@ function userReducer(state: User[], action: UserAction): User[] {
   }
 }
 
-function UsersContextProvider({ children }) {
+function UsersContextProvider({ children }: { children: React.ReactNode }) {
   const [usersState, dispatch] = useReducer(userReducer, [] as User[]);
   const db = useSQLiteContext();
 
@@ -89,18 +88,16 @@ function UsersContextProvider({ children }) {
 
   async function addUser({
     name,
-    imageUri,
     description,
     email,
   }: {
     name: string;
-    imageUri: string;
     description: string;
     email: string;
   }) {
     const result = await db.runAsync(
-      "INSERT INTO Users (name,imageUri , description, email) VALUES (?,?,?,?)",
-      [name, imageUri, description, email]
+      "INSERT INTO Users (name , description, email) VALUES (?,?,?)",
+      [name, description, email]
     );
     console.log(result);
 
@@ -110,7 +107,6 @@ function UsersContextProvider({ children }) {
         payload: {
           user: {
             name: name,
-            imageUri: imageUri,
             description: description,
             email: email,
             id: result.lastInsertRowId,
@@ -122,8 +118,8 @@ function UsersContextProvider({ children }) {
 
   async function updateUser(user: User) {
     const result = await db.runAsync(
-      "UPDATE Users SET name = ?, imageUri = ?, description = ?, email = ? WHERE id = ?",
-      [user.name, user.imageUri, user.description, user.email, user.id]
+      "UPDATE Users SET name = ?,  description = ?, email = ? WHERE id = ?",
+      [user.name, user.description, user.email, user.id]
     );
 
     if (result.changes > 0) {
@@ -155,7 +151,7 @@ function UsersContextProvider({ children }) {
   };
 
   return (
-    <UsersContext.Provider value={value}>{children} </UsersContext.Provider>
+    <UsersContext.Provider value={value}>{children}</UsersContext.Provider>
   );
 }
 

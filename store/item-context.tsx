@@ -6,6 +6,16 @@ import { useSQLiteContext } from "expo-sqlite";
 
 export async function init() {
   const db = await SQLite.openDatabaseAsync("Ecommerce.db");
+  await db.execAsync("PRAGMA journal_mode = WAL");
+  await db.execAsync("PRAGMA foreign_keys = ON");
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS Users(
+        id INTEGER PRIMARY KEY NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT ,
+        email TEXT NOT NULL,
+        imageUri TEXT
+    )`);
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS Items(
         id INTEGER PRIMARY KEY NOT NULL,
@@ -16,16 +26,7 @@ export async function init() {
         cost INTEGER NOT NULL,
         imageUri TEXT ,
         FOREIGN KEY(vendorId) REFERENCES Users(id) ON DELETE CASCADE
-
     )`);
-  await db.execAsync(`
-        CREATE TABLE IF NOT EXISTS Users(
-            id INTEGER PRIMARY KEY NOT NULL,
-            name TEXT NOT NULL,
-            description TEXT ,
-            email TEXT NOT NULL,
-            imageUri TEXT,
-        )`);
 }
 
 export const ItemsContext = createContext({

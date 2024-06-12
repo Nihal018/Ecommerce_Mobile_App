@@ -6,7 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Browse from "./screens/BrowseOverview/Browse";
 import Favourites from "./screens/Favourites";
 import Cart from "./screens/Cart";
-import Profile from "./screens/Profile";
+import Profile from "./screens/ProfileScreens/Profile";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -26,16 +26,37 @@ import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import { SQLiteProvider } from "expo-sqlite";
 import ItemsContextProvider, { init } from "./store/item-context";
 import UsersContextProvider from "./store/user-context";
+import MyProducts from "./screens/ProfileScreens/MyProducts";
+import PastPurchases from "./screens/ProfileScreens/PastPurchases";
 
 const bottomTab = createBottomTabNavigator();
 const topTab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
+
+function ProfileScreens() {
+  return (
+    <ProfileStack.Navigator initialRouteName="Profile">
+      <ProfileStack.Screen name="Profile" component={Profile} options={{}} />
+      <ProfileStack.Screen name="MyProducts" component={MyProducts} />
+      <ProfileStack.Screen name="PastPurchases" component={PastPurchases} />
+    </ProfileStack.Navigator>
+  );
+}
 
 function AuthScreens() {
   return (
     <AuthStack.Navigator initialRouteName="Login" screenOptions={{}}>
-      <AuthStack.Screen name="Login" component={Login} />
+      <AuthStack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerTitleStyle: {
+            marginLeft: 15,
+          },
+        }}
+      />
       <AuthStack.Screen name="SignUp" component={SignUp} />
     </AuthStack.Navigator>
   );
@@ -114,6 +135,7 @@ function Navigation() {
                 tabBarActiveTintColor: "black",
                 tabBarInactiveTintColor: "grey",
                 tabBarLabelPosition: "below-icon",
+                tabBarHideOnKeyboard: true,
               }}
             >
               <bottomTab.Screen
@@ -182,8 +204,8 @@ function Navigation() {
               />
               {authCtx.isAuthenticated && (
                 <bottomTab.Screen
-                  name="Profile"
-                  component={Profile}
+                  name="ProfileScreens"
+                  component={ProfileScreens}
                   options={{
                     tabBarIcon: ({ color, size }) => {
                       return (
@@ -194,6 +216,7 @@ function Navigation() {
                         />
                       );
                     },
+                    headerShown: false,
                     tabBarLabel: "Profile",
                   }}
                 />
