@@ -10,10 +10,16 @@ async function authenticate(mode: string, email: string, password: string) {
     password: password,
     returnSecureToken: true,
   });
+  const localId = response.data.localId;
 
   const token = response.data.idToken;
 
-  return token;
+  const res = {
+    localId: localId,
+    token: token,
+  };
+
+  return res;
 }
 
 export function createUser(email: string, password: string) {

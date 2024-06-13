@@ -1,10 +1,13 @@
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import { Item } from "../../models/Item";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import CardList from "../../components/CardList";
+import { ItemsContext } from "../../store/item-context";
 
 export default function ItemCategory({ navigation, route }) {
   const category: string = route.params.category;
+  const ItemsCtx = useContext(ItemsContext);
+  const catItems = ItemsCtx.items.filter((item) => item.category === category);
 
   useEffect(() => {
     navigation.setOptions({
@@ -18,7 +21,7 @@ export default function ItemCategory({ navigation, route }) {
 
   return (
     <View className="bg-white w-full h-full">
-      <CardList pressHandler={pressHandler} numColumns={2} />
+      <CardList pressHandler={pressHandler} numColumns={2} items={catItems} />
     </View>
   );
 }

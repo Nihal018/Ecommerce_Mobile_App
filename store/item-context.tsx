@@ -4,30 +4,27 @@ import { useReducer, createContext, useEffect } from "react";
 import { Item } from "../models/Item";
 import { useSQLiteContext } from "expo-sqlite";
 
-export async function init() {
-  const db = await SQLite.openDatabaseAsync("Ecommerce.db");
-  await db.execAsync("PRAGMA journal_mode = WAL");
-  await db.execAsync("PRAGMA foreign_keys = ON");
-  await db.execAsync(`
-    CREATE TABLE IF NOT EXISTS Users(
-        id INTEGER PRIMARY KEY NOT NULL,
-        name TEXT NOT NULL,
-        description TEXT ,
-        email TEXT NOT NULL,
-        imageUri TEXT
-    )`);
-  await db.execAsync(`
-    CREATE TABLE IF NOT EXISTS Items(
-        id INTEGER PRIMARY KEY NOT NULL,
-        description TEXT NOT NULL,
-        name TEXT NOT NULL,
-        category TEXT NOT NULL,
-        vendorId INTEGER , 
-        cost INTEGER NOT NULL,
-        imageUri TEXT ,
-        FOREIGN KEY(vendorId) REFERENCES Users(id) ON DELETE CASCADE
-    )`);
-}
+// async function convertImageToBase64(uri:string) {
+//   const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+//   return base64;
+// }
+
+// function storeImage(base64String:string) {
+//   db.transaction(tx => {
+//     tx.executeSql('INSERT INTO images (image) VALUES (?);', [base64String]);
+//   });
+// }
+
+// function getImage(callback) {
+//   db.transaction(tx => {
+//     tx.executeSql('SELECT * FROM images;', [], (_, { rows }) => {
+//       if (rows.length > 0) {
+//         const base64String = rows.item(0).image;
+//         callback(base64String);
+//       }
+//     });
+//   });
+// }
 
 export const ItemsContext = createContext({
   items: [] as Item[],

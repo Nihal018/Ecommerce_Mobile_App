@@ -1,10 +1,12 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import HorizontalView from "./HorizontalView";
-import { Items } from "../data/dummy-data";
+import { Item } from "../models/Item";
 export default function Deals({
   pressHandler,
+  items,
 }: {
   pressHandler: (itemId: number) => void;
+  items: Item[];
 }) {
   return (
     <View>
@@ -20,7 +22,7 @@ export default function Deals({
         </Pressable>
       </View>
       <View className="mt-5">
-        <HorizontalView items={Items} pressHandler={pressHandler} />
+        <HorizontalView items={items} pressHandler={pressHandler} />
       </View>
     </View>
   );

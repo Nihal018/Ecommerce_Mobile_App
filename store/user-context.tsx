@@ -1,5 +1,3 @@
-import * as SQLite from "expo-sqlite";
-
 import { useReducer, createContext, useEffect } from "react";
 import { User } from "../models/User";
 import { useSQLiteContext } from "expo-sqlite";
@@ -10,6 +8,7 @@ export const UsersContext = createContext({
     name: string;
     description: string;
     email: string;
+    firebaseId: string;
   }) => {},
   updateUser: (user: User) => {},
   deleteUser: (userId: number) => {},
@@ -44,6 +43,7 @@ type UserAction =
 function userReducer(state: User[], action: UserAction): User[] {
   switch (action.type) {
     case "ADD":
+      console.log("Newly created user =", action.payload.user);
       return [...state, action.payload.user];
 
     case "UPDATE":
@@ -89,15 +89,17 @@ function UsersContextProvider({ children }: { children: React.ReactNode }) {
   async function addUser({
     name,
     description,
+    firebaseId,
     email,
   }: {
     name: string;
     description: string;
+    firebaseId: string;
     email: string;
   }) {
     const result = await db.runAsync(
-      "INSERT INTO Users (name , description, email) VALUES (?,?,?)",
-      [name, description, email]
+      "INSERT INTO Users (name , description, email ,firebaseId) VALUES (?,?,?,?)",
+      [name, description, email, firebaseId]
     );
     console.log(result);
 
@@ -110,6 +112,7 @@ function UsersContextProvider({ children }: { children: React.ReactNode }) {
             description: description,
             email: email,
             id: result.lastInsertRowId,
+            firebaseId: firebaseId,
           },
         },
       });

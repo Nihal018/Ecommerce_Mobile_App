@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.error100,
   },
   labelInvalid: {
-    color: Colors.error500,
+    color: Colors.error400,
   },
   scrollViewContent: {
     flexGrow: 1,

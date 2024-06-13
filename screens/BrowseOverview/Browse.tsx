@@ -6,8 +6,10 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import { ItemsContext } from "../../store/item-context";
+import { useSQLiteContext } from "expo-sqlite";
 
 type Cat = {
   category: string;
@@ -37,11 +39,20 @@ function renderListItem(cat: Cat, pressHandler: (category: string) => void) {
 }
 
 export default function Browse({ navigation }) {
-  const categories: Cat[] = [
-    { category: "Mobile" },
-    { category: "Headphones" },
-    { category: "Drones" },
-  ];
+  const [categories, setCategories] = useState([] as Cat[]);
+
+  const db = useSQLiteContext();
+
+  useEffect(() => {
+    async function fetchCats() {
+      const allCategs = await db.getAllAsync<Cat>(
+        "SELECT category FROM Items GROUP BY category"
+      );
+      setCategories(allCategs);
+    }
+
+    fetchCats();
+  }, [db]);
 
   const pressHandler = (category: string) => {
     navigation.navigate("ItemCategory", { category: category });

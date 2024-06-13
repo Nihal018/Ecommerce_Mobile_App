@@ -25,15 +25,16 @@ export default function SignUp({ navigation }) {
   }) {
     setIsAuthenticating(true);
     try {
-      const token = await createUser(email, password);
+      const res = await createUser(email, password);
       // add function to add user to user context and sqllite
       UserCtx.addUser({
         name: userName,
         email: email,
         description: "",
+        firebaseId: res.localId,
       });
 
-      authCtx.authenticate(token);
+      authCtx.authenticate(res.token, res.localId);
     } catch (error) {
       Alert.alert(
         "Authentication failed",

@@ -23,8 +23,8 @@ export default function Login({ navigation }) {
   }) {
     setIsAuthenticating(true);
     try {
-      const token = await login(email, password);
-      authCtx.authenticate(token);
+      const res = await login(email, password);
+      authCtx.authenticate(res.token, res.localId);
     } catch (error) {
       Alert.alert(
         "Authentication failed",

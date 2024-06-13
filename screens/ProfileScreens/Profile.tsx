@@ -2,15 +2,25 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Colors } from "../../constants/colors";
 import { useContext } from "react";
 import { AuthContext } from "../../store/auth-context";
+import { UsersContext } from "../../store/user-context";
 
 export default function Profile({ navigation }) {
   const authCtx = useContext(AuthContext);
+  const UserCtx = useContext(UsersContext);
+
+  const UserIndex = UserCtx.users.findIndex(
+    (user) => user.firebaseId === authCtx.userFirebaseId
+  );
+
+  if (UserIndex < 0) return;
+
+  const userId = UserCtx.users[UserIndex].id;
 
   const logOutHandler = () => {
     authCtx.logout();
   };
   const goToMyProducts = () => {
-    navigation.navigate("MyProducts");
+    navigation.navigate("MyProducts", { userId: userId });
   };
   const goToPastPurchases = () => {
     navigation.navigate("PastPurchases");
