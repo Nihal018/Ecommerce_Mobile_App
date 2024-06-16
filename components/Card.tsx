@@ -78,7 +78,7 @@ export default function Card({
           />
         </Pressable>
       </View>
-      <View className="text-left ml-2">
+      <View className="text-left ml-2" style={styles.textContainer}>
         <Text className="font-bold text-md text-red-600">${item.cost}</Text>
         <Text className="font-semibold text-md">{item.name}</Text>
         <Text className="text-sm" numberOfLines={1} ellipsizeMode="tail">
@@ -104,6 +104,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 5,
     height: 140,
+    width: 150,
+  },
+  textContainer: {
     width: 150,
   },
   heartIcon: {

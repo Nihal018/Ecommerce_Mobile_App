@@ -56,7 +56,7 @@ export default function ItemDetails({ navigation, route }) {
 
   return (
     <View className="bg-white w-full h-full ">
-      <View className=" flex-row border-2 border-gray-100 m-4 pb-8">
+      <View className=" flex-row border-2 border-gray-100 m-4 pb-8 justify-between">
         <Image
           style={styles.image}
           source={{
@@ -65,7 +65,7 @@ export default function ItemDetails({ navigation, route }) {
           resizeMode="contain"
         />
 
-        <View className=" w-24 h-24 mt-52 mr-9">
+        <View className=" w-24 h-24 mt-40 ">
           <Pressable
             onPress={addToFavorites}
             style={({ pressed }) => [
@@ -92,7 +92,7 @@ export default function ItemDetails({ navigation, route }) {
         </View>
       </View>
 
-      <View className="text-left ml-4 ">
+      <View className="text-left mx-4 ">
         <Text className="font-extrabold  text-black" style={{ fontSize: 20 }}>
           ${item.cost}
         </Text>
@@ -117,8 +117,9 @@ const styles = StyleSheet.create({
   image: {
     height: 250,
     width: 250,
-    marginLeft: 25,
+    marginLeft: 20,
     marginTop: 25,
+    marginRight: 10,
   },
   imageContainer: {
     borderColor: "rgb(229, 231, 235)",
@@ -129,6 +130,7 @@ const styles = StyleSheet.create({
   },
   heartIcon: {
     padding: 5,
+    marginLeft: 2,
 
     marginBottom: 15,
     marginRight: 20,

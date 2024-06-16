@@ -6,10 +6,14 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { ItemsContext } from "../../store/item-context";
 import { useSQLiteContext } from "expo-sqlite";
+import SearchBar from "../../components/SearchBar";
+import { Item } from "../../models/Item";
+import CardList from "../../components/CardList";
+import { AuthContext } from "../../store/auth-context";
 
 type Cat = {
   category: string;
@@ -40,6 +44,10 @@ function renderListItem(cat: Cat, pressHandler: (category: string) => void) {
 
 export default function Browse({ navigation }) {
   const [categories, setCategories] = useState([] as Cat[]);
+  const [filteredItems, setFilteredItems] = useState([] as Item[]);
+  const itemCtx = useContext(ItemsContext);
+  const authCtx = useContext(AuthContext);
+  const items = itemCtx.items;
 
   const db = useSQLiteContext();
 
@@ -54,29 +62,43 @@ export default function Browse({ navigation }) {
     fetchCats();
   }, [db]);
 
-  const pressHandler = (category: string) => {
+  const goToItemDetails = (itemId: number) => {
+    navigation.navigate("ItemDetails", { itemId: itemId });
+  };
+
+  const handleSearch = (query: string) => {
+    const lowerCaseQuery = query.trim().toLowerCase();
+    const results = items.filter(
+      (item) =>
+        item.name.trim().toLowerCase().includes(lowerCaseQuery) ||
+        item.description.trim().toLowerCase().includes(lowerCaseQuery)
+    );
+    console.log(results);
+    setFilteredItems(results);
+  };
+
+  const goToItemCategory = (category: string) => {
     navigation.navigate("ItemCategory", { category: category });
   };
 
   return (
     <View className="bg-white w-full h-full ">
-      <View
-        style={styles.textInputContainer}
-        className="border-2 border-black bg-gray-100 rounded-xl "
-      >
-        <TextInput
-          className=" flex-1 "
-          style={styles.textInput}
-          multiline={true}
-          placeholder="Search"
-        ></TextInput>
-      </View>
+      <SearchBar onSearch={handleSearch} />
       <View className="mt-4">
-        <FlatList
-          data={categories}
-          keyExtractor={(cat) => cat.category}
-          renderItem={({ item }) => renderListItem(item, pressHandler)}
-        />
+        {filteredItems.length === 0 ? (
+          <FlatList
+            data={categories}
+            keyExtractor={(cat) => cat.category}
+            renderItem={({ item }) => renderListItem(item, goToItemCategory)}
+          />
+        ) : (
+          <CardList
+            pressHandler={goToItemDetails}
+            numColumns={2}
+            items={filteredItems}
+            userId={authCtx.userId}
+          />
+        )}
       </View>
     </View>
   );

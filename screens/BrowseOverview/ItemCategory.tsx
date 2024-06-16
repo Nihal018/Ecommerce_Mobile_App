@@ -3,11 +3,13 @@ import { Item } from "../../models/Item";
 import { useContext, useEffect } from "react";
 import CardList from "../../components/CardList";
 import { ItemsContext } from "../../store/item-context";
+import { AuthContext } from "../../store/auth-context";
 
 export default function ItemCategory({ navigation, route }) {
   const category: string = route.params.category;
   const ItemsCtx = useContext(ItemsContext);
   const catItems = ItemsCtx.items.filter((item) => item.category === category);
+  const authCtx = useContext(AuthContext);
 
   useEffect(() => {
     navigation.setOptions({
@@ -21,7 +23,12 @@ export default function ItemCategory({ navigation, route }) {
 
   return (
     <View className="bg-white w-full h-full">
-      <CardList pressHandler={pressHandler} numColumns={2} items={catItems} />
+      <CardList
+        pressHandler={pressHandler}
+        numColumns={2}
+        items={catItems}
+        userId={authCtx.userId}
+      />
     </View>
   );
 }
