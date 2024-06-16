@@ -34,7 +34,13 @@ export default function SignUp({ navigation }) {
         firebaseId: res.localId,
       });
 
-      authCtx.authenticate(res.token, res.localId);
+      const UserIndex = UserCtx.users.findIndex(
+        (user) => user.firebaseId === res.localId
+      );
+
+      const userId = UserCtx.users[UserIndex].id;
+
+      authCtx.authenticate(res.token, res.localId, userId);
     } catch (error) {
       Alert.alert(
         "Authentication failed",

@@ -4,19 +4,53 @@ import { AntDesign } from "@expo/vector-icons";
 import { Items } from "../../data/dummy-data";
 import { useContext, useState } from "react";
 import { ItemsContext } from "../../store/item-context";
+import { FavouriteContext } from "../../store/favourite-context";
+import { AuthContext } from "../../store/auth-context";
+import { CartContext } from "../../store/cart-context";
 
 export default function ItemDetails({ navigation, route }) {
   const itemId = route.params.itemId;
   const ItemsCtx = useContext(ItemsContext);
-  const item = ItemsCtx.items.filter((item) => item.id === itemId)[0];
-  const [favItem, setFavItem] = useState(false);
+  const AuthCtx = useContext(AuthContext);
+  const FavouriteCtx = useContext(FavouriteContext);
+  const CartCtx = useContext(CartContext);
 
-  const heartPressHandler = () => {
+  const item = ItemsCtx.items.find((item) => item.id === itemId);
+  const userId = AuthCtx.userId;
+
+  if (!item) return;
+
+  let favIndex = FavouriteCtx.favouriteItems.findIndex(
+    (favItem) => favItem.userId === userId && favItem.itemId === item.id
+  );
+  const [favItem, setFavItem] = useState(favIndex >= 0 ? true : false);
+
+  const addToFavorites = () => {
+    if (userId === -1) {
+      return;
+    }
+
+    if (!favItem) {
+      FavouriteCtx.addFavouriteItem({ userId: userId, itemId: item.id });
+    } else {
+      favIndex = FavouriteCtx.favouriteItems.findIndex(
+        (favItem) => favItem.userId === userId && favItem.itemId === item.id
+      );
+
+      if (favIndex === -1) return;
+
+      const deleteFavItem = FavouriteCtx.favouriteItems[favIndex];
+
+      FavouriteCtx.deleteFavouriteItem(deleteFavItem);
+    }
+
     setFavItem(!favItem);
-    //logic to store state in database
   };
 
   const addToCart = () => {
+    CartCtx.addCartItem({ userId: userId, itemId: itemId });
+    console.log("item added to cart");
+
     // logic to add item to cart
   };
 
@@ -33,7 +67,7 @@ export default function ItemDetails({ navigation, route }) {
 
         <View className=" w-24 h-24 mt-52 mr-9">
           <Pressable
-            onPress={heartPressHandler}
+            onPress={addToFavorites}
             style={({ pressed }) => [
               pressed && styles.pressed,
               styles.heartIcon,
@@ -45,7 +79,9 @@ export default function ItemDetails({ navigation, route }) {
               color="black"
             />
           </Pressable>
+
           <Pressable
+            onPress={addToCart}
             style={({ pressed }) => [
               pressed && styles.pressed,
               { marginLeft: 4 },

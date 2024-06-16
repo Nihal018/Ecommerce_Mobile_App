@@ -18,14 +18,17 @@ import CustomMenu from "../../components/CustomMenu";
 function ProductCard({
   item,
   deleteHandler,
+  goToDetails,
 }: {
   item: Item;
   deleteHandler: (itemId: number) => void;
+  goToDetails: (itemId: number) => void;
 }) {
   const [menuVisible, setMenuVisible] = useState(false);
   return (
     <View className="flex-1 flex-row justify-between align-middle">
       <Pressable
+        onPress={() => goToDetails(item.id)}
         style={({ pressed }) => [
           styles.itemContainer,
           pressed && styles.pressed,
@@ -101,6 +104,14 @@ export default function MyProducts({ navigation, route }) {
     return item.vendorId === userId;
   });
 
+  const goToDetails = (itemId: number) => {
+    navigation.navigate("BrowseOverview", {
+      screen: "ItemDetails",
+      params: { itemId: itemId },
+      initial: false,
+    });
+  };
+
   const goToAddProduct = () => {
     navigation.navigate("AddProduct", { userId: userId });
   };
@@ -115,7 +126,11 @@ export default function MyProducts({ navigation, route }) {
           data={items}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <ProductCard item={item} deleteHandler={deleteHandler} />
+            <ProductCard
+              item={item}
+              deleteHandler={deleteHandler}
+              goToDetails={goToDetails}
+            />
           )}
           initialNumToRender={10}
         />

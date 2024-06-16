@@ -99,7 +99,7 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
   const db = useSQLiteContext();
 
   useEffect(() => {
-    async function fetchAllTasks() {
+    async function fetchAllItems() {
       const temp = await db.getAllAsync<Item>("SELECT * FROM Items ");
       dispatch({
         type: "INIT",
@@ -108,7 +108,7 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
-    fetchAllTasks();
+    fetchAllItems();
   }, []);
 
   async function addItem({
@@ -128,7 +128,14 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
   }) {
     const result = await db.runAsync(
       "INSERT INTO Items (name,cost,imageUri , description, category, vendorId) VALUES (?,?,?,?,?,?)",
-      [name, cost, imageUri, description, category, vendorId]
+      [
+        name.trim(),
+        cost,
+        imageUri.trim(),
+        description.trim(),
+        category.trim(),
+        vendorId,
+      ]
     );
     console.log(result);
     if (result.changes > 0) {
@@ -136,11 +143,11 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
         type: "ADD",
         payload: {
           item: {
-            name: name,
+            name: name.trim(),
             cost: cost,
-            imageUri: imageUri,
-            description: description,
-            category: category,
+            imageUri: imageUri.trim(),
+            description: description.trim(),
+            category: category.trim(),
             vendorId: vendorId,
             id: result.lastInsertRowId,
           },

@@ -6,10 +6,12 @@ export default function CardList({
   numColumns,
   pressHandler,
   items,
+  userId,
 }: {
   numColumns: number;
   pressHandler: (itemId: number) => void;
   items: Item[];
+  userId: number;
 }) {
   return (
     <View className="flex-1 align-middle mx-2 mt-2">
@@ -17,7 +19,7 @@ export default function CardList({
         data={items}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <Card pressHandler={pressHandler} item={item} />
+          <Card pressHandler={pressHandler} item={item} userId={userId} />
         )}
         numColumns={numColumns}
         initialNumToRender={10}

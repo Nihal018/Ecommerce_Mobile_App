@@ -11,13 +11,16 @@ import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useContext } from "react";
 import { ItemsContext } from "../store/item-context";
+import { FavouriteContext } from "../store/favourite-context";
+import { AuthContext } from "../store/auth-context";
 
-function favoriteItemCard(item: Item) {
+function favoriteItemCard(item: Item, goToDetails: (itemId: number) => void) {
   function DeleteHandler() {}
 
   return (
     <View className="flex-1 flex-row justify-between align-middle">
       <Pressable
+        onPress={() => goToDetails(item.id)}
         style={({ pressed }) => [
           styles.itemContainer,
           pressed && styles.pressed,
@@ -73,8 +76,30 @@ function favoriteItemCard(item: Item) {
 }
 
 export default function Favourites({ navigation }) {
+  const FavCtx = useContext(FavouriteContext);
   const ItemCtx = useContext(ItemsContext);
-  const items = ItemCtx.items;
+
+  const AuthCtx = useContext(AuthContext);
+  const favItems = FavCtx.favouriteItems.filter(
+    (item) => item.userId === AuthCtx.userId
+  );
+
+  const goToDetails = (itemId: number) => {
+    navigation.navigate("BrowseOverview", {
+      screen: "ItemDetails",
+      params: { itemId: itemId },
+      initial: false,
+    });
+  };
+
+  let items = [] as Item[];
+
+  if (favItems.length > 0) {
+    for (let favItem of favItems) {
+      const item = ItemCtx.items.find((item) => item.id === favItem.itemId);
+      if (item) items.push(item);
+    }
+  }
 
   return (
     <View className="bg-white w-full h-full">
@@ -82,7 +107,7 @@ export default function Favourites({ navigation }) {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => favoriteItemCard(item)}
+          renderItem={({ item }) => favoriteItemCard(item, goToDetails)}
           initialNumToRender={10}
         />
       </View>

@@ -4,9 +4,11 @@ import { Item } from "../models/Item";
 export default function Deals({
   pressHandler,
   items,
+  userId,
 }: {
   pressHandler: (itemId: number) => void;
   items: Item[];
+  userId: number;
 }) {
   return (
     <View>
