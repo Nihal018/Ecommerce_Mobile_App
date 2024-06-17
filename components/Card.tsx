@@ -32,6 +32,14 @@ export default function Card({
   );
   const [favItem, setFavItem] = useState(favIndex >= 0 ? true : false);
 
+  useEffect(() => {
+    favIndex = FavouriteCtx.favouriteItems.findIndex(
+      (favItem) => favItem.userId === userId && favItem.itemId === item.id
+    );
+
+    setFavItem(favIndex >= 0 ? true : false);
+  }, [FavouriteCtx]);
+
   const addToFavorites = () => {
     if (userId === -1) {
       return;
@@ -95,6 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 1000,
   },
   image: { marginLeft: 2, height: 100, width: 100 },
   imageContainer: {
@@ -133,6 +142,3 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
 });
-function dispatch(arg0: { type: string; payload: { users: any } }) {
-  throw new Error("Function not implemented.");
-}

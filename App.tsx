@@ -31,6 +31,7 @@ import PastPurchases from "./screens/ProfileScreens/PastPurchases";
 import AddProduct from "./screens/ProfileScreens/AddProduct";
 import CartItemsContextProvider from "./store/cart-context";
 import FavouriteItemsContextProvider from "./store/favourite-context";
+import EditProduct from "./screens/ProfileScreens/EditProduct";
 
 const bottomTab = createBottomTabNavigator();
 const topTab = createMaterialTopTabNavigator();
@@ -90,8 +91,21 @@ function ProfileScreens() {
         component={MyProducts}
         options={{ headerTitle: "My Products" }}
       />
-      <ProfileStack.Screen name="PastPurchases" component={PastPurchases} />
-      <ProfileStack.Screen name="AddProduct" component={AddProduct} />
+      <ProfileStack.Screen
+        name="PastPurchases"
+        component={PastPurchases}
+        options={{ headerTitle: "Past Purchases" }}
+      />
+      <ProfileStack.Screen
+        name="AddProduct"
+        component={AddProduct}
+        options={{ headerTitle: "Add Products" }}
+      />
+      <ProfileStack.Screen
+        name="EditProduct"
+        component={EditProduct}
+        options={{ headerTitle: "Edit Products" }}
+      />
     </ProfileStack.Navigator>
   );
 }

@@ -5,24 +5,37 @@ import {
   Image,
   Pressable,
   FlatList,
+  Modal,
+  TouchableOpacity,
 } from "react-native";
 import { Item } from "../models/Item";
-import { Items } from "../data/dummy-data";
-import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { CartContext } from "../store/cart-context";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../store/auth-context";
 import { ItemsContext } from "../store/item-context";
+import CartMenu from "../components/CartMenu";
 
-function cartItemCard(item: Item, goToDetails: (itemId: number) => void) {
-  function DeleteHandler() {}
-  const count = 5;
+function cartItemCard(
+  item: Item,
+  goToDetails: (itemId: number) => void,
+  onRemove: (itemId: number) => void
+) {
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const [count, setCount] = useState(0);
+
+  const incrementHandler = () => {
+    setCount((oldcount) => oldcount + 1);
+  };
+  const decrementHandler = () => {
+    setCount((oldcount) => oldcount + 1);
+  };
 
   return (
-    <View className="flex-1 flex-row justify-between align-middle">
+    <View className="flex-row justify-between align-middle">
       <Pressable
         onPress={() => goToDetails(item.id)}
         style={({ pressed }) => [
@@ -65,10 +78,17 @@ function cartItemCard(item: Item, goToDetails: (itemId: number) => void) {
             color="black"
           />
         </Pressable>
+        <View className="">
+          <CartMenu
+            visible={menuVisible}
+            onClose={() => setMenuVisible(false)}
+            onRemove={onRemove}
+          />
+        </View>
 
         <View className="flex-row justify-evenly align-middle ml-12">
           <Pressable
-            onPress={() => {}}
+            onPress={decrementHandler}
             style={({ pressed }) => [styles.minus, pressed && styles.pressed]}
           >
             <FontAwesome6 name="minus" size={12} color="black" />
@@ -76,7 +96,7 @@ function cartItemCard(item: Item, goToDetails: (itemId: number) => void) {
 
           <Text className="mx-2 mt-1">{count}</Text>
           <Pressable
-            onPress={() => {}}
+            onPress={incrementHandler}
             style={({ pressed }) => [styles.plus, pressed && styles.pressed]}
           >
             <Feather name="plus" size={10} color="white" />
@@ -104,6 +124,10 @@ export default function Cart({ navigation }) {
     });
   };
 
+  const onRemove = (itemId: number) => {
+    cartCtx.deleteCartItem({ userId: AuthCtx.userId, itemId: itemId });
+  };
+
   let items = [] as Item[];
 
   if (cartItems.length > 0) {
@@ -119,7 +143,7 @@ export default function Cart({ navigation }) {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => cartItemCard(item, goToDetails)}
+          renderItem={({ item }) => cartItemCard(item, goToDetails, onRemove)}
           initialNumToRender={10}
         />
       </View>
@@ -190,5 +214,25 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.5,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  menuContainer: {
+    alignSelf: "flex-end",
+    marginTop: 200,
+    width: 120,
+    backgroundColor: "white",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  menuItem: {
+    paddingVertical: 5,
+  },
+  menuText: {
+    fontSize: 15,
   },
 });

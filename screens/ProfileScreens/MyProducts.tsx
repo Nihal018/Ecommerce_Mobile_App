@@ -7,13 +7,14 @@ import {
   StyleSheet,
   Modal,
 } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Item } from "../../models/Item";
 import { AuthContext } from "../../store/auth-context";
 import { ItemsContext } from "../../store/item-context";
 import CustomMenu from "../../components/CustomMenu";
+import { useNavigation } from "@react-navigation/native";
 
 function ProductCard({
   item,
@@ -25,6 +26,12 @@ function ProductCard({
   goToDetails: (itemId: number) => void;
 }) {
   const [menuVisible, setMenuVisible] = useState(false);
+  const navigation = useNavigation();
+
+  const onEditClick = () => {
+    setMenuVisible(false);
+    navigation.navigate("EditProduct", { itemId: item.id });
+  };
   return (
     <View className="flex-1 flex-row justify-between align-middle">
       <Pressable
@@ -83,10 +90,7 @@ function ProductCard({
             <CustomMenu
               visible={menuVisible}
               onClose={() => setMenuVisible(false)}
-              onEdit={() => {
-                setMenuVisible(false);
-                alert(`Edit ${item.name}`);
-              }}
+              onEdit={onEditClick}
             />
           </View>
         </View>
@@ -100,9 +104,15 @@ export default function MyProducts({ navigation, route }) {
   const itemCtx = useContext(ItemsContext);
   const userId = route.params.userId;
 
-  const items = itemCtx.items.filter((item: Item) => {
-    return item.vendorId === userId;
-  });
+  const [products, setProducts] = useState([] as Item[]);
+
+  useEffect(() => {
+    const items = itemCtx.items.filter((item: Item) => {
+      return item.vendorId === userId;
+    });
+
+    setProducts(items);
+  }, [itemCtx]);
 
   const goToDetails = (itemId: number) => {
     navigation.navigate("BrowseOverview", {
@@ -123,7 +133,7 @@ export default function MyProducts({ navigation, route }) {
     <View className="bg-white w-full h-full">
       <View style={{ height: 500 }}>
         <FlatList
-          data={items}
+          data={products}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ProductCard

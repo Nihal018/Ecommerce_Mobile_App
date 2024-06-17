@@ -35,10 +35,12 @@ function renderListItem(item: Item, pressHandler: (itemId: number) => void) {
             resizeMode="contain"
           />
         </View>
-        <View className="mb-6 mr-2">
+        <View className="mb-6 mx-4 w-44 pr-3 ">
           <Text className="font-bold text-lg">{item.category}</Text>
           <Text className="text-red-600 text-lg"> ${item.cost}</Text>
-          <Text className="text-md font-semibold ">{item.description}</Text>
+          <Text className="text-md font-semibold " numberOfLines={1}>
+            {item.description}
+          </Text>
         </View>
       </Pressable>
     </View>

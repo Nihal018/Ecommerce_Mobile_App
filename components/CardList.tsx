@@ -18,9 +18,11 @@ export default function CardList({
       <FlatList
         data={items}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <Card pressHandler={pressHandler} item={item} userId={userId} />
-        )}
+        renderItem={({ item }) => {
+          return (
+            <Card pressHandler={pressHandler} item={item} userId={userId} />
+          );
+        }}
         numColumns={numColumns}
         initialNumToRender={10}
       />

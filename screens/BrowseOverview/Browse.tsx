@@ -14,6 +14,7 @@ import SearchBar from "../../components/SearchBar";
 import { Item } from "../../models/Item";
 import CardList from "../../components/CardList";
 import { AuthContext } from "../../store/auth-context";
+import Card from "../../components/Card";
 
 type Cat = {
   category: string;
@@ -45,8 +46,10 @@ function renderListItem(cat: Cat, pressHandler: (category: string) => void) {
 export default function Browse({ navigation }) {
   const [categories, setCategories] = useState([] as Cat[]);
   const [filteredItems, setFilteredItems] = useState([] as Item[]);
+  const [displayCats, setDisplayCats] = useState(true);
   const itemCtx = useContext(ItemsContext);
   const authCtx = useContext(AuthContext);
+
   const items = itemCtx.items;
 
   const db = useSQLiteContext();
@@ -68,13 +71,16 @@ export default function Browse({ navigation }) {
 
   const handleSearch = (query: string) => {
     const lowerCaseQuery = query.trim().toLowerCase();
+    setDisplayCats(lowerCaseQuery.length === 0);
+
     const results = items.filter(
       (item) =>
         item.name.trim().toLowerCase().includes(lowerCaseQuery) ||
         item.description.trim().toLowerCase().includes(lowerCaseQuery)
     );
-    console.log(results);
+
     setFilteredItems(results);
+    if (filteredItems.length > 0) console.log(filteredItems[0].description);
   };
 
   const goToItemCategory = (category: string) => {
@@ -85,19 +91,30 @@ export default function Browse({ navigation }) {
     <View className="bg-white w-full h-full ">
       <SearchBar onSearch={handleSearch} />
       <View className="mt-4">
-        {filteredItems.length === 0 ? (
+        {filteredItems.length === 0 || displayCats ? (
           <FlatList
             data={categories}
             keyExtractor={(cat) => cat.category}
             renderItem={({ item }) => renderListItem(item, goToItemCategory)}
           />
         ) : (
-          <CardList
-            pressHandler={goToItemDetails}
-            numColumns={2}
-            items={filteredItems}
-            userId={authCtx.userId}
-          />
+          <View className="mr-2 mt-2">
+            <FlatList
+              data={filteredItems}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => {
+                return (
+                  <Card
+                    pressHandler={goToItemDetails}
+                    item={item}
+                    userId={authCtx.userId}
+                  />
+                );
+              }}
+              numColumns={2}
+              initialNumToRender={10}
+            />
+          </View>
         )}
       </View>
     </View>
