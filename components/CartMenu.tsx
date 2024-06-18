@@ -1,60 +1,55 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 
-export default function cartMenu({
+export default function CartMenu({
   onClose,
   onRemove,
-  visible,
   itemId,
 }: {
   onClose: () => void;
-  visible: boolean;
   onRemove: (itemId: number) => void;
   itemId: number;
 }) {
   return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity style={styles.modalOverlay} onPress={onClose}>
-        <View style={styles.menuContainer}>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => onRemove(itemId)}
-          >
-            <Text style={styles.menuText}>Remove from Cart</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={onClose}>
-            <Text style={styles.menuText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.menuContainer}>
+      <TouchableOpacity
+        style={styles.menuItem}
+        onPress={() => onRemove(itemId)}
+      >
+        <Text style={styles.menuText}>Remove from Cart</Text>
       </TouchableOpacity>
-    </Modal>
+      <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+        <Text style={styles.menuText}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
   menuContainer: {
-    alignSelf: "flex-end",
-    marginTop: 200,
-    width: 120,
+    position: "absolute",
+    top: 50, // Adjust as necessary to position below the dots
+    right: 0,
+    marginRight: 8,
+    width: 140,
+    height: 55,
     backgroundColor: "white",
-    paddingVertical: 10,
+    paddingVertical: 4,
+    justifyContent: "center",
     paddingHorizontal: 10,
     borderRadius: 10,
-    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    zIndex: 100,
   },
   menuItem: {
-    paddingVertical: 5,
+    paddingVertical: 2,
   },
   menuText: {
-    fontSize: 15,
+    fontSize: 14,
+    fontWeight: 600,
   },
 });

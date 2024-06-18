@@ -1,112 +1,11 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-  FlatList,
-  Modal,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { Item } from "../models/Item";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { FontAwesome6 } from "@expo/vector-icons";
+
 import { CartContext } from "../store/cart-context";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../store/auth-context";
 import { ItemsContext } from "../store/item-context";
-import CartMenu from "../components/CartMenu";
-
-function cartItemCard(
-  item: Item,
-  goToDetails: (itemId: number) => void,
-  onRemove: (itemId: number) => void
-) {
-  const [menuVisible, setMenuVisible] = useState(false);
-
-  const [count, setCount] = useState(0);
-
-  const incrementHandler = () => {
-    setCount((oldcount) => oldcount + 1);
-  };
-  const decrementHandler = () => {
-    setCount((oldcount) => oldcount + 1);
-  };
-
-  return (
-    <View className="flex-row justify-between align-middle">
-      <Pressable
-        onPress={() => goToDetails(item.id)}
-        style={({ pressed }) => [
-          styles.itemContainer,
-          pressed && styles.pressed,
-        ]}
-      >
-        <View className="ml-3" style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={{
-              uri: `data:image/jpeg;base64,${item.imageUri}`,
-            }}
-            resizeMode="contain"
-          />
-        </View>
-        <View className="ml-4 w-40 ">
-          <Text className="text-left font-bold text-md text-red-600">
-            ${item.cost}
-          </Text>
-          <Text className="text-left font-semibold text-md">{item.name}</Text>
-          <Text
-            className="text-left text-sm"
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {item.description}
-          </Text>
-        </View>
-      </Pressable>
-
-      <View style={styles.buttonContainer}>
-        <Pressable
-          onPress={() => {}}
-          style={({ pressed }) => [styles.dots, pressed && styles.pressed]}
-        >
-          <MaterialCommunityIcons
-            name="dots-vertical"
-            size={28}
-            color="black"
-          />
-        </Pressable>
-        {/* <View className="">
-          <CartMenu
-            visible={menuVisible}
-            onClose={() => setMenuVisible(false)}
-            onRemove={onRemove}
-            itemId={item.id}
-          />
-        </View> */}
-
-        <View className="flex-row justify-evenly align-middle ml-12">
-          <Pressable
-            onPress={decrementHandler}
-            style={({ pressed }) => [styles.minus, pressed && styles.pressed]}
-          >
-            <FontAwesome6 name="minus" size={12} color="black" />
-          </Pressable>
-
-          <Text className="mx-2 mt-1">{count}</Text>
-          <Pressable
-            onPress={incrementHandler}
-            style={({ pressed }) => [styles.plus, pressed && styles.pressed]}
-          >
-            <Feather name="plus" size={10} color="white" />
-          </Pressable>
-        </View>
-      </View>
-    </View>
-  );
-}
+import CartItemCard from "../components/CartItemCard";
 
 export default function Cart({ navigation }) {
   const cartCtx = useContext(CartContext);
@@ -147,11 +46,13 @@ export default function Cart({ navigation }) {
 
   return (
     <View className="bg-white w-full h-full">
-      <View className="">
+      <View style={{ height: "85%" }}>
         <FlatList
           data={items}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => cartItemCard(item, goToDetails, onRemove)}
+          renderItem={({ item }) => {
+            return <CartItemCard item={item} goToDetails={goToDetails} />;
+          }}
           initialNumToRender={10}
         />
       </View>

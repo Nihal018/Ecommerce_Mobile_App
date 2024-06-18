@@ -13,10 +13,13 @@ import { useContext, useEffect, useState } from "react";
 import { ItemsContext } from "../store/item-context";
 import { FavouriteContext } from "../store/favourite-context";
 import { AuthContext } from "../store/auth-context";
+import { CartContext } from "../store/cart-context";
 
-function favoriteItemCard(item: Item, goToDetails: (itemId: number) => void) {
-  function DeleteHandler() {}
-
+function favoriteItemCard(
+  item: Item,
+  goToDetails: (itemId: number) => void,
+  addToCart: (itemId: number) => void
+) {
   return (
     <View className="flex-row justify-between align-middle">
       <Pressable
@@ -53,7 +56,7 @@ function favoriteItemCard(item: Item, goToDetails: (itemId: number) => void) {
       <View style={styles.buttonContainer}>
         <Pressable
           onPress={() => {
-            DeleteHandler();
+            addToCart(item.id);
           }}
           style={({ pressed }) => [styles.addToCart, pressed && styles.pressed]}
         >
@@ -79,6 +82,7 @@ export default function Favourites({ navigation }) {
   const FavCtx = useContext(FavouriteContext);
   const ItemCtx = useContext(ItemsContext);
   const AuthCtx = useContext(AuthContext);
+  const CartCtx = useContext(CartContext);
   const [items, setItems] = useState([] as Item[]);
 
   const goToDetails = (itemId: number) => {
@@ -87,6 +91,16 @@ export default function Favourites({ navigation }) {
       params: { itemId: itemId },
       initial: false,
     });
+  };
+
+  const addToCart = (itemId: number) => {
+    if (AuthCtx.userId === -1) {
+      return;
+    }
+    CartCtx.addCartItem({ userId: AuthCtx.userId, itemId: itemId });
+    console.log("item added to cart");
+
+    // logic to add item to cart
   };
 
   useEffect(() => {
@@ -112,7 +126,9 @@ export default function Favourites({ navigation }) {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => favoriteItemCard(item, goToDetails)}
+          renderItem={({ item }) =>
+            favoriteItemCard(item, goToDetails, addToCart)
+          }
           initialNumToRender={10}
         />
       </View>
