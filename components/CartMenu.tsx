@@ -1,23 +1,16 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  Image,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 
 export default function cartMenu({
   onClose,
   onRemove,
   visible,
+  itemId,
 }: {
   onClose: () => void;
   visible: boolean;
   onRemove: (itemId: number) => void;
+  itemId: number;
 }) {
   return (
     <Modal
@@ -28,7 +21,10 @@ export default function cartMenu({
     >
       <TouchableOpacity style={styles.modalOverlay} onPress={onClose}>
         <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={onRemove}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => onRemove(itemId)}
+          >
             <Text style={styles.menuText}>Remove from Cart</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={onClose}>

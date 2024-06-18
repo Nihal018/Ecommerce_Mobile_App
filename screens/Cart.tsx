@@ -13,7 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { CartContext } from "../store/cart-context";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../store/auth-context";
 import { ItemsContext } from "../store/item-context";
 import CartMenu from "../components/CartMenu";
@@ -78,13 +78,14 @@ function cartItemCard(
             color="black"
           />
         </Pressable>
-        <View className="">
+        {/* <View className="">
           <CartMenu
             visible={menuVisible}
             onClose={() => setMenuVisible(false)}
             onRemove={onRemove}
+            itemId={item.id}
           />
-        </View>
+        </View> */}
 
         <View className="flex-row justify-evenly align-middle ml-12">
           <Pressable
@@ -112,9 +113,25 @@ export default function Cart({ navigation }) {
   const ItemCtx = useContext(ItemsContext);
 
   const AuthCtx = useContext(AuthContext);
-  const cartItems = cartCtx.cartItems.filter(
-    (item) => item.userId === AuthCtx.userId
-  );
+
+  const [items, setItems] = useState([] as Item[]);
+
+  useEffect(() => {
+    const cartItems = cartCtx.cartItems.filter(
+      (item) => item.userId === AuthCtx.userId
+    );
+
+    let itemsList = [] as Item[];
+
+    if (cartItems.length > 0) {
+      for (let cartItem of cartItems) {
+        const item = ItemCtx.items.find((item) => item.id === cartItem.itemId);
+        if (item) itemsList.push(item);
+      }
+    }
+
+    setItems(itemsList);
+  }, [cartCtx, ItemCtx]);
 
   const goToDetails = (itemId: number) => {
     navigation.navigate("BrowseOverview", {
@@ -127,15 +144,6 @@ export default function Cart({ navigation }) {
   const onRemove = (itemId: number) => {
     cartCtx.deleteCartItem({ userId: AuthCtx.userId, itemId: itemId });
   };
-
-  let items = [] as Item[];
-
-  if (cartItems.length > 0) {
-    for (let cartItem of cartItems) {
-      const item = ItemCtx.items.find((item) => item.id === cartItem.itemId);
-      if (item) items.push(item);
-    }
-  }
 
   return (
     <View className="bg-white w-full h-full">

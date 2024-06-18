@@ -104,7 +104,7 @@ export default function Favourites({ navigation }) {
 
       setItems(arr);
     }
-  }, [FavCtx]);
+  }, [FavCtx, ItemCtx]);
 
   return (
     <View className="bg-white w-full h-full">

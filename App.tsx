@@ -13,9 +13,9 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import All from "./screens/HomeOverview/All";
 import Audio from "./screens/HomeOverview/Audio";
 import Drones from "./screens/HomeOverview/Drones";
-import Gaming from "./screens/HomeOverview/Gaming";
+import Gaming from "./screens/HomeOverview/Furniture";
 import PC from "./screens/HomeOverview/PC";
-import Video from "./screens/HomeOverview/Video";
+import Video from "./screens/HomeOverview/Sports";
 import { createStackNavigator } from "@react-navigation/stack";
 import ItemCategory from "./screens/BrowseOverview/ItemCategory";
 import ItemDetails from "./screens/BrowseOverview/ItemDetails";
@@ -25,13 +25,15 @@ import { useContext, useState } from "react";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import ItemsContextProvider from "./store/item-context";
-import UsersContextProvider from "./store/user-context";
+import UsersContextProvider, { UsersContext } from "./store/user-context";
 import MyProducts from "./screens/ProfileScreens/MyProducts";
 import PastPurchases from "./screens/ProfileScreens/PastPurchases";
 import AddProduct from "./screens/ProfileScreens/AddProduct";
 import CartItemsContextProvider from "./store/cart-context";
 import FavouriteItemsContextProvider from "./store/favourite-context";
 import EditProduct from "./screens/ProfileScreens/EditProduct";
+import Sports from "./screens/HomeOverview/Sports";
+import Furniture from "./screens/HomeOverview/Furniture";
 
 const bottomTab = createBottomTabNavigator();
 const topTab = createMaterialTopTabNavigator();
@@ -162,9 +164,9 @@ function HomeTabs() {
       <topTab.Screen name="Audio" component={Audio} options={{}} />
       <topTab.Screen name="Drones" component={Drones} options={{}} />
 
-      <topTab.Screen name="Gaming" component={Gaming} options={{}} />
-      <topTab.Screen name="PC" component={PC} options={{}} />
-      <topTab.Screen name="Video" component={Video} options={{}} />
+      <topTab.Screen name="Furniture" component={Furniture} options={{}} />
+      <topTab.Screen name="Laptops" component={PC} options={{}} />
+      <topTab.Screen name="Sports" component={Sports} options={{}} />
     </topTab.Navigator>
   );
 }
@@ -187,6 +189,14 @@ function BrowseOverview() {
 
 function Navigation() {
   const authCtx = useContext(AuthContext);
+  const userCtx = useContext(UsersContext);
+  const user = userCtx.users.find((user) => user.id === authCtx.userId);
+  let title = "Hello ";
+  if (user) {
+    title = title + user.name;
+  } else {
+    title = title + "There";
+  }
 
   return (
     <ItemsContextProvider>
@@ -217,7 +227,7 @@ function Navigation() {
                   },
 
                   tabBarLabel: "Home",
-                  headerTitle: "Hello XYZ",
+                  headerTitle: `${title}`,
                   headerStyle: {
                     height: 90, // Set the custom height for the header
                     backgroundColor: "white",

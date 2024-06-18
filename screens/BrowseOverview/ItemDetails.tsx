@@ -48,6 +48,9 @@ export default function ItemDetails({ navigation, route }) {
   };
 
   const addToCart = () => {
+    if (userId === -1) {
+      return;
+    }
     CartCtx.addCartItem({ userId: userId, itemId: itemId });
     console.log("item added to cart");
 

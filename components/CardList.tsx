@@ -14,7 +14,7 @@ export default function CardList({
   userId: number;
 }) {
   return (
-    <View className="flex-1 align-middle mx-2 mt-2">
+    <View className="flex-1 align-middle mr-2 mt-2">
       <FlatList
         data={items}
         keyExtractor={(item) => item.id.toString()}

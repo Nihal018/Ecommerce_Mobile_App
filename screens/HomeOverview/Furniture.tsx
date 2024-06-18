@@ -4,8 +4,8 @@ import CardList from "../../components/CardList";
 import { AuthContext } from "../../store/auth-context";
 import { ItemsContext } from "../../store/item-context";
 
-export default function PC({ navigation }) {
-  const category = "Laptops";
+export default function Furniture({ navigation }) {
+  const category = "Furniture";
   const ItemsCtx = useContext(ItemsContext);
   const catItems = ItemsCtx.items.filter((item) => item.category === category);
   const authCtx = useContext(AuthContext);
