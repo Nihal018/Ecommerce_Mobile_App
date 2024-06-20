@@ -1,4 +1,4 @@
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 import { Item } from "../models/Item";
 
 import { CartContext } from "../store/cart-context";
@@ -14,6 +14,7 @@ export default function Cart({ navigation }) {
   const AuthCtx = useContext(AuthContext);
 
   const [items, setItems] = useState([] as Item[]);
+  const [totalCost, setTotalCost] = useState(0);
 
   useEffect(() => {
     const cartItems = cartCtx.cartItems.filter(
@@ -25,11 +26,12 @@ export default function Cart({ navigation }) {
     if (cartItems.length > 0) {
       for (let cartItem of cartItems) {
         const item = ItemCtx.items.find((item) => item.id === cartItem.itemId);
-        if (item) itemsList.push(item);
+        if (item) {
+          itemsList.push(item);
+        }
       }
+      setItems(itemsList);
     }
-
-    setItems(itemsList);
   }, [cartCtx, ItemCtx]);
 
   const goToDetails = (itemId: number) => {
@@ -40,21 +42,57 @@ export default function Cart({ navigation }) {
     });
   };
 
-  const onRemove = (itemId: number) => {
-    cartCtx.deleteCartItem({ userId: AuthCtx.userId, itemId: itemId });
-  };
+  function addItemCost(itemCost: number) {
+    setTotalCost((oldcost) => oldcost + itemCost);
+  }
+
+  function minusItemCost(itemCost: number) {
+    setTotalCost((oldcost) => oldcost - itemCost);
+  }
+
+  function paymentHandler() {}
 
   return (
     <View className="bg-white w-full h-full">
-      <View style={{ height: "85%" }}>
+      <View style={{ height: "77%" }}>
         <FlatList
           data={items}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
-            return <CartItemCard item={item} goToDetails={goToDetails} />;
+            return (
+              <CartItemCard
+                item={item}
+                goToDetails={goToDetails}
+                addItemCost={addItemCost}
+                minusItemCost={minusItemCost}
+              />
+            );
           }}
           initialNumToRender={10}
         />
+      </View>
+      <View className="w-full px-4 mt-4">
+        <View className="px-2 mb-2">
+          <View className="flex-row justify-between mb-1">
+            <Text style={{ fontSize: 15 }}>Shipping :</Text>
+            <Text style={{ fontSize: 15 }}>$0.00</Text>
+          </View>
+          <View className="flex-row justify-between">
+            <Text style={{ fontSize: 16 }} className="font-bold ">
+              Total :
+            </Text>
+            <Text style={{ fontSize: 16 }} className="font-bold ">
+              ${totalCost}
+            </Text>
+          </View>
+        </View>
+        <Pressable
+          style={({ pressed }) => [pressed && styles.pressed, styles.checkout]}
+          onPress={paymentHandler}
+          android_ripple={{ color: "rgba(255, 255, 255, 1.6)" }}
+        >
+          <Text className="text-white font-bold text-center">Checkout</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -78,6 +116,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 5,
     paddingHorizontal: 5,
+  },
+  checkout: {
+    backgroundColor: "black",
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    justifyContent: "center",
+
+    marginTop: 5,
+    marginBottom: 10,
+    height: 50,
   },
   dots: {
     marginLeft: 97,
@@ -131,7 +181,7 @@ const styles = StyleSheet.create({
   menuContainer: {
     alignSelf: "flex-end",
     marginTop: 200,
-    width: 120,
+    width: 110,
     backgroundColor: "white",
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -141,7 +191,7 @@ const styles = StyleSheet.create({
   menuItem: {
     paddingVertical: 5,
   },
-  menuText: {
+  text: {
     fontSize: 15,
   },
 });

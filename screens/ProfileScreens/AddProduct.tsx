@@ -35,7 +35,7 @@ async function convertImageToBase64(uri: string) {
 //   });
 // }
 
-export default function AddProduct({ route }) {
+export default function AddProduct({ route, navigation }) {
   const userId = route.params.userId;
   const [cred, setCred] = useState({
     name: "",
@@ -71,10 +71,8 @@ export default function AddProduct({ route }) {
 
   const addProduct = () => {
     ItemCtx.addItem(cred);
-    navigation.goBack();
+    navigation.navigate("MyProducts", { userId: userId });
   };
-
-  const navigation = useNavigation();
 
   return (
     <KeyboardAvoidingView
@@ -92,6 +90,7 @@ export default function AddProduct({ route }) {
               onPress={() => {
                 pickImage();
               }}
+              android_ripple={{ color: "rgba(250,250,250,0.8)" }}
             >
               <Text className="text-white font-bold text-center">
                 Add Image
@@ -156,6 +155,7 @@ export default function AddProduct({ route }) {
               onPress={() => {
                 addProduct();
               }}
+              android_ripple={{ color: "rgba(250,250,250,0.8)" }}
             >
               <Text className="text-white font-bold text-center"> Add </Text>
             </Pressable>
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
 
   login: {
-    backgroundColor: "rgb(147, 197 ,253)",
+    backgroundColor: "rgb(96, 165, 250)",
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,

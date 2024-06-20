@@ -18,7 +18,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.nihal018.EccommerceApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +34,11 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2550c8ae-7116-452c-89e9-fc3e16122c79"
+      }
+    }
   }
 }

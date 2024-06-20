@@ -44,7 +44,7 @@ function favoriteItemCard(
           </Text>
           <Text className="text-left font-semibold text-md">{item.name}</Text>
           <Text
-            className="text-left text-sm"
+            className="text-left text-sm pr-4"
             numberOfLines={1}
             ellipsizeMode="tail"
           >

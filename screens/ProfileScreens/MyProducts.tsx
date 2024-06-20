@@ -28,6 +28,10 @@ function ProductCard({
   const [menuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation();
 
+  const onClose = () => {
+    setMenuVisible(false);
+  };
+
   const onEditClick = () => {
     setMenuVisible(false);
     navigation.navigate("EditProduct", { itemId: item.id });
@@ -75,7 +79,7 @@ function ProductCard({
           <AntDesign name="delete" size={24} color="crimson" />
         </Pressable>
 
-        <View className="flex-col">
+        <View className="flex-col" style={{ position: "relative" }}>
           <Pressable
             onPress={() => setMenuVisible(true)}
             style={({ pressed }) => [pressed && styles.pressed]}
@@ -86,13 +90,14 @@ function ProductCard({
               color="black"
             />
           </Pressable>
-          <View className="">
+
+          {menuVisible && (
             <CustomMenu
               visible={menuVisible}
-              onClose={() => setMenuVisible(false)}
+              onClose={onClose}
               onEdit={onEditClick}
             />
-          </View>
+          )}
         </View>
       </View>
     </View>
@@ -112,7 +117,7 @@ export default function MyProducts({ navigation, route }) {
     });
 
     setProducts(items);
-  }, [itemCtx]);
+  }, [itemCtx.items, userId]);
 
   const goToDetails = (itemId: number) => {
     navigation.navigate("BrowseOverview", {
@@ -131,7 +136,7 @@ export default function MyProducts({ navigation, route }) {
 
   return (
     <View className="bg-white w-full h-full">
-      <View style={{ height: 500 }}>
+      <View style={{ height: 520 }}>
         <FlatList
           data={products}
           keyExtractor={(item) => item.id.toString()}
@@ -151,8 +156,9 @@ export default function MyProducts({ navigation, route }) {
           onPress={() => {
             goToAddProduct();
           }}
+          android_ripple={{ color: "rgba(250,250,250,0.8)" }}
         >
-          <Text className="text-white font-bold text-center"> Add Items</Text>
+          <Text className="text-white font-bold text-center">Add Items</Text>
         </Pressable>
       </View>
     </View>
@@ -170,7 +176,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2196F3",
   },
   login: {
-    backgroundColor: "rgb(147, 197 ,253)",
+    backgroundColor: "rgb(96, 165, 250)",
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,
@@ -225,10 +231,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
+
   buttonContainer: {
     flex: 1,
     flexDirection: "row",

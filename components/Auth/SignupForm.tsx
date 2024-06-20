@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
 
   login: {
-    backgroundColor: "rgb(147, 197 ,253)",
+    backgroundColor: "rgb(96, 165, 250)",
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,

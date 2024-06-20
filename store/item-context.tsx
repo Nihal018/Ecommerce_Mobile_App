@@ -109,7 +109,7 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
       });
     }
     fetchAllItems();
-  }, []);
+  }, [db]);
 
   async function addItem({
     name,

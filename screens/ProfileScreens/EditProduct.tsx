@@ -166,6 +166,7 @@ export default function EditProduct({ route, navigation }) {
               onPress={() => {
                 updateProduct();
               }}
+              android_ripple={{ color: "rgba(250,250,250,0.7)" }}
             >
               <Text className="text-white font-bold text-center"> Update </Text>
             </Pressable>
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
   },
 
   login: {
-    backgroundColor: "rgb(147, 197 ,253)",
+    backgroundColor: "rgb(96, 165, 250)",
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,

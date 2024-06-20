@@ -12,9 +12,13 @@ import { AuthContext } from "../store/auth-context";
 export default function CartItemCard({
   item,
   goToDetails,
+  addItemCost,
+  minusItemCost,
 }: {
   item: Item;
   goToDetails: (itemId: number) => void;
+  addItemCost: (itemCost: number) => void;
+  minusItemCost: (itemCost: number) => void;
 }) {
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -30,10 +34,12 @@ export default function CartItemCard({
 
   const incrementHandler = () => {
     setCount((oldcount) => oldcount + 1);
+    addItemCost(item.cost);
   };
   const decrementHandler = () => {
     if (count === 0) return;
     setCount((oldcount) => oldcount - 1);
+    minusItemCost(item.cost);
   };
 
   return (

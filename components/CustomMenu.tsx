@@ -10,45 +10,53 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export default function CustomMenu({ visible, onClose, onEdit }) {
+export default function CustomMenu({
+  visible,
+  onClose,
+  onEdit,
+}: {
+  onClose: () => void;
+  onEdit: () => void;
+  visible: boolean;
+}) {
   return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-    >
-      <TouchableOpacity style={styles.modalOverlay} onPress={onClose}>
-        <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuItem} onPress={onEdit}>
-            <Text style={styles.menuText}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={onClose}>
-            <Text style={styles.menuText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.menuContainer}>
+      <TouchableOpacity style={styles.menuItem} onPress={onEdit}>
+        <Text style={styles.menuText}>Edit</Text>
       </TouchableOpacity>
-    </Modal>
+      <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+        <Text style={styles.menuText}>Cancel</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
   menuContainer: {
+    position: "absolute",
     alignSelf: "flex-end",
-    marginTop: 200,
-    width: 120,
+    justifyContent: "center",
+    marginTop: 0,
+    width: 105,
+    top: 35, // Adjust as necessary to position below the dots
+    right: 0,
+    height: 64,
+    marginRight: 5,
     backgroundColor: "white",
-    paddingVertical: 10,
+    paddingVertical: 3,
     paddingHorizontal: 10,
     borderRadius: 10,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    zIndex: 100,
   },
   menuItem: {
-    paddingVertical: 5,
+    paddingVertical: 2,
+    justifyContent: "center",
   },
   menuText: {
     fontSize: 15,

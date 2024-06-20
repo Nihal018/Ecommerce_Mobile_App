@@ -31,6 +31,7 @@ function renderListItem(cat: Cat, pressHandler: (category: string) => void) {
         onPress={() => {
           pressHandler(cat.category);
         }}
+        android_ripple={{ color: "rgba(255, 255, 255, 1.6)" }}
       >
         <View>
           <Text className="font-bold text-lg">{cat.category}</Text>

@@ -61,11 +61,11 @@ export default function Card({
 
     setFavItem(!favItem);
   };
-
   return (
     <Pressable
       onPress={() => pressHandler(item.id)}
       style={({ pressed }) => [styles.itemContainer, pressed && styles.pressed]}
+      android_ripple={{ color: "rgba(209, 213, 219,0.7)" }}
     >
       <View className="mb-3" style={styles.imageContainer}>
         <Image
@@ -87,7 +87,7 @@ export default function Card({
         </Pressable>
       </View>
       <View className="text-left ml-2" style={styles.textContainer}>
-        <Text className="font-bold text-md text-red-600">${item.cost}</Text>
+        <Text className="font-bold text-md text-gray-">${item.cost}</Text>
         <Text className="font-semibold text-md">{item.name}</Text>
         <Text className="text-sm" numberOfLines={1} ellipsizeMode="tail">
           {item.description}

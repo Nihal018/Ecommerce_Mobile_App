@@ -90,12 +90,14 @@ export default function LoginForm({
             <Pressable
               style={({ pressed }) => [pressed && styles.pressed, styles.login]}
               onPress={submitHandler}
+              android_ripple={{ color: "rgba(250,250,250,0.8)" }}
             >
               <Text className="text-white font-bold text-center">Log In</Text>
             </Pressable>
             <Pressable
               style={({ pressed }) => [pressed && styles.pressed]}
               onPress={goToSignUp}
+              android_ripple={{ color: "rgba(250,250,250,0.8)" }}
             >
               <Text className="text-blue-300 text-center my-2">
                 Create a new user
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
   },
 
   login: {
-    backgroundColor: "rgb(147, 197 ,253)",
+    backgroundColor: "rgb(96, 165, 250)",
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,

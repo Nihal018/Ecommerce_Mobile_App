@@ -19,6 +19,7 @@ export default function Deals({
         <Pressable
           style={({ pressed }) => [pressed && styles.pressed]}
           className=""
+          android_ripple={{ color: "rgba(255, 255, 255, 0.6)" }}
         >
           <Text className="text-gray-500 text-md mt-1"> See all</Text>
         </Pressable>

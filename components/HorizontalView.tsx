@@ -22,6 +22,7 @@ function renderListItem(item: Item, pressHandler: (itemId: number) => void) {
           styles.itemContainer,
           pressed && styles.pressed,
         ]}
+        android_ripple={{ color: "rgba(209, 213, 219,0.7)" }}
         onPress={() => {
           pressHandler(item.id);
         }}
