@@ -1,9 +1,6 @@
-import * as SQLite from "expo-sqlite";
-
 import { useReducer, createContext, useEffect } from "react";
 import { Item } from "../models/Item";
 import { useSQLiteContext } from "expo-sqlite";
-
 // async function convertImageToBase64(uri:string) {
 //   const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
 //   return base64;

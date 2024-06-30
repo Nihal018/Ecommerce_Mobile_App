@@ -117,7 +117,7 @@ export default function MyProducts({ navigation, route }) {
     });
 
     setProducts(items);
-  }, [itemCtx.items, userId]);
+  }, [itemCtx.items]);
 
   const goToDetails = (itemId: number) => {
     navigation.navigate("BrowseOverview", {
