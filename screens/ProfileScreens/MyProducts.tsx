@@ -15,6 +15,7 @@ import { AuthContext } from "../../store/auth-context";
 import { ItemsContext } from "../../store/item-context";
 import CustomMenu from "../../components/CustomMenu";
 import { useNavigation } from "@react-navigation/native";
+import { UsersContext } from "../../store/user-context";
 
 function ProductCard({
   item,
@@ -108,16 +109,14 @@ function ProductCard({
 export default function MyProducts({ navigation, route }) {
   const itemCtx = useContext(ItemsContext);
   const userId = route.params.userId;
-
-  const [products, setProducts] = useState([] as Item[]);
+  const [userCreatedItems, setUserCreatedItems] = useState<Item[]>(
+    itemCtx.userCreatedItems
+  );
 
   useEffect(() => {
-    const items = itemCtx.items.filter((item: Item) => {
-      return item.vendorId === userId;
-    });
-
-    setProducts(items);
-  }, [itemCtx.items, userId]);
+    setUserCreatedItems(itemCtx.userCreatedItems);
+    console.log(userCreatedItems.length);
+  }, [itemCtx.userCreatedItems]);
 
   const goToDetails = (itemId: number) => {
     navigation.navigate("BrowseOverview", {
@@ -132,13 +131,14 @@ export default function MyProducts({ navigation, route }) {
   };
   const deleteHandler = (itemId: number) => {
     itemCtx.deleteItem(itemId);
+    setUserCreatedItems(itemCtx.userCreatedItems);
   };
 
   return (
     <View className="bg-white w-full h-full">
       <View style={{ height: 520 }}>
         <FlatList
-          data={products}
+          data={userCreatedItems}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ProductCard

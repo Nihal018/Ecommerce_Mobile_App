@@ -181,8 +181,20 @@ function BrowseOverview() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="ItemCategory" component={ItemCategory} />
-      <Stack.Screen name="ItemDetails" component={ItemDetails} />
+      <Stack.Screen
+        name="ItemCategory"
+        component={ItemCategory}
+        options={{
+          headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name="ItemDetails"
+        component={ItemDetails}
+        options={{
+          headerTitle: "",
+        }}
+      />
     </Stack.Navigator>
   );
 }

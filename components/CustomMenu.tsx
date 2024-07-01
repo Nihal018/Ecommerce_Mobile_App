@@ -24,7 +24,7 @@ export default function CustomMenu({
       <TouchableOpacity style={styles.menuItem} onPress={onEdit}>
         <Text style={styles.menuText}>Edit</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuItem} onPress={onClose}>
+      <TouchableOpacity style={styles.menuItem} onPress={() => onClose()}>
         <Text style={styles.menuText}>Cancel</Text>
       </TouchableOpacity>
     </View>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     width: 105,
     top: 35, // Adjust as necessary to position below the dots
     right: 0,
-    height: 64,
+    height: 60,
     marginRight: 5,
     backgroundColor: "white",
     paddingVertical: 3,

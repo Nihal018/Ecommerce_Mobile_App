@@ -9,7 +9,7 @@ export default function SearchBar({
   const [query, setQuery] = useState("");
 
   const handleSearch = () => {
-    if (query.trim().length > 0) {
+    if (query.trim().length >= 0) {
       onSearch(query);
       console.log(query);
     }
