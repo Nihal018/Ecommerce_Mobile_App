@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"; // can only store string data
 import { useSQLiteContext } from "expo-sqlite";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { UsersContext } from "./user-context";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext({
   token: "",

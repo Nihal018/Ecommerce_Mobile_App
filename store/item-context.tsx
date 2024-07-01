@@ -1,6 +1,13 @@
-import { useReducer, createContext, useEffect } from "react";
+import {
+  useReducer,
+  createContext,
+  useEffect,
+  useState,
+  useContext,
+} from "react";
 import { Item } from "../models/Item";
 import { useSQLiteContext } from "expo-sqlite";
+import { AuthContext } from "./auth-context";
 // async function convertImageToBase64(uri:string) {
 //   const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
 //   return base64;
@@ -25,6 +32,7 @@ import { useSQLiteContext } from "expo-sqlite";
 
 export const ItemsContext = createContext({
   items: [] as Item[],
+  userCreatedItems: [] as Item[],
   addItem: (details: {
     name: string;
     cost: number;
@@ -93,6 +101,8 @@ function itemReducer(state: Item[], action: ItemAction): Item[] {
 
 function ItemsContextProvider({ children }: { children: React.ReactNode }) {
   const [itemsState, dispatch] = useReducer(itemReducer, [] as Item[]);
+  const [userCreatedItems, setUserCreatedItems] = useState([] as Item[]);
+  const authCtx = useContext(AuthContext);
   const db = useSQLiteContext();
 
   useEffect(() => {
@@ -105,8 +115,23 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
+
     fetchAllItems();
-  }, [db]);
+  }, []);
+
+  useEffect(() => {
+    async function fetchUserItems(userId: number) {
+      if (userId === -1) return;
+
+      const temp = await db.getAllAsync<Item>(
+        "SELECT * FROM Items WHERE vendorId = ?",
+        [userId]
+      );
+      setUserCreatedItems(temp);
+    }
+
+    fetchUserItems(authCtx.userId);
+  }, [authCtx.userId, itemsState.length]);
 
   async function addItem({
     name,
@@ -187,6 +212,7 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
 
   const value = {
     items: itemsState,
+    userCreatedItems: userCreatedItems,
     addItem: addItem,
     updateItem: updateItem,
     deleteItem: deleteItem,
