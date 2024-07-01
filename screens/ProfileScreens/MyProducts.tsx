@@ -13,9 +13,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Item } from "../../models/Item";
 import { AuthContext } from "../../store/auth-context";
 import { ItemsContext } from "../../store/item-context";
-import CustomMenu from "../../components/CustomMenu";
 import { useNavigation } from "@react-navigation/native";
-import { UsersContext } from "../../store/user-context";
+import ProductMenu from "../../components/ProductMenu";
 
 function ProductCard({
   item,
@@ -38,7 +37,10 @@ function ProductCard({
     navigation.navigate("EditProduct", { itemId: item.id });
   };
   return (
-    <View className="flex-1 flex-row justify-between align-middle">
+    <View
+      className="flex-1 flex-row justify-between align-middle"
+      style={{ elevation: 2 }}
+    >
       <Pressable
         onPress={() => goToDetails(item.id)}
         style={({ pressed }) => [
@@ -93,7 +95,7 @@ function ProductCard({
           </Pressable>
 
           {menuVisible && (
-            <CustomMenu
+            <ProductMenu
               visible={menuVisible}
               onClose={onClose}
               onEdit={onEditClick}
@@ -115,6 +117,7 @@ export default function MyProducts({ navigation, route }) {
 
   useEffect(() => {
     setUserCreatedItems(itemCtx.userCreatedItems);
+    console.log(itemCtx.userCreatedItems.length);
     console.log(userCreatedItems.length);
   }, [itemCtx.userCreatedItems]);
 
@@ -131,7 +134,6 @@ export default function MyProducts({ navigation, route }) {
   };
   const deleteHandler = (itemId: number) => {
     itemCtx.deleteItem(itemId);
-    setUserCreatedItems(itemCtx.userCreatedItems);
   };
 
   return (
@@ -239,6 +241,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 50,
     paddingRight: 5,
+    elevation: 2,
   },
 
   itemContainer: {

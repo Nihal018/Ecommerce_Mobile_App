@@ -27,8 +27,11 @@ export default function CartItemCard({
 
   const AuthCtx = useContext(AuthContext);
 
-  const onRemove = (itemId: number) => {
-    cartCtx.deleteCartItem({ userId: AuthCtx.userId, itemId: itemId });
+  const onRemove = () => {
+    cartCtx.deleteCartItem({ userId: AuthCtx.userId, itemId: item.id });
+    setMenuVisible(false);
+  };
+  const onClose = () => {
     setMenuVisible(false);
   };
 
@@ -43,7 +46,10 @@ export default function CartItemCard({
   };
 
   return (
-    <View className="flex-row justify-between align-middle">
+    <View
+      className="flex-row justify-between align-middle"
+      style={{ elevation: 2 }}
+    >
       <Pressable
         onPress={() => goToDetails(item.id)}
         style={({ pressed }) => [
@@ -77,7 +83,9 @@ export default function CartItemCard({
 
       <View style={styles.buttonContainer}>
         <Pressable
-          onPress={() => setMenuVisible(true)}
+          onPress={() => {
+            setMenuVisible(true);
+          }}
           style={({ pressed }) => [styles.dots, pressed && styles.pressed]}
         >
           <MaterialCommunityIcons
@@ -87,13 +95,7 @@ export default function CartItemCard({
           />
         </Pressable>
 
-        {menuVisible && (
-          <CartMenu
-            onClose={() => setMenuVisible(false)}
-            onRemove={onRemove}
-            itemId={item.id}
-          />
-        )}
+        {menuVisible && <CartMenu onClose={onClose} onRemove={onRemove} />}
 
         <View className="flex-row justify-evenly align-middle ml-12">
           <Pressable
@@ -161,6 +163,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
+    elevation: 2,
     flexDirection: "column",
     justifyContent: "flex-end",
     alignItems: "center",

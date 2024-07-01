@@ -4,19 +4,14 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 export default function CartMenu({
   onClose,
   onRemove,
-  itemId,
 }: {
   onClose: () => void;
-  onRemove: (itemId: number) => void;
-  itemId: number;
+  onRemove: () => void;
 }) {
   return (
     <View style={styles.menuContainer}>
-      <TouchableOpacity
-        style={styles.menuItem}
-        onPress={() => onRemove(itemId)}
-      >
-        <Text style={styles.menuText}>Remove from Cart</Text>
+      <TouchableOpacity style={styles.menuItem} onPress={onRemove}>
+        <Text style={styles.menuText}>Remove</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuItem} onPress={onClose}>
         <Text style={styles.menuText}>Cancel</Text>
@@ -28,14 +23,16 @@ export default function CartMenu({
 const styles = StyleSheet.create({
   menuContainer: {
     position: "absolute",
-    top: 50, // Adjust as necessary to position below the dots
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    top: 40, // Adjust as necessary to position below the dots
     right: 0,
     marginRight: 8,
-    width: 140,
+    width: 100,
     height: 55,
     backgroundColor: "white",
     paddingVertical: 4,
-    justifyContent: "center",
     paddingHorizontal: 10,
     borderRadius: 10,
     shadowColor: "#000",
@@ -50,6 +47,5 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize: 14,
-    fontWeight: 600,
   },
 });
