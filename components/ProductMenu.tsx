@@ -18,7 +18,7 @@ export default function ProductMenu({
   onClose: () => void;
   onEdit: () => void;
   visible: boolean;
-}) {
+}) { 
   return (
     <View style={styles.menuContainer}>
       <TouchableOpacity style={styles.menuItem} onPress={onEdit}>

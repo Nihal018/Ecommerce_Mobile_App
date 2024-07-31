@@ -6,8 +6,8 @@ import {
   useContext,
 } from "react";
 import { Item } from "../models/Item";
-import { useSQLiteContext } from "expo-sqlite";
 import { AuthContext } from "./auth-context";
+import { firebaseServices } from "../util/firebaseSDK";
 // async function convertImageToBase64(uri:string) {
 //   const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
 //   return base64;
@@ -39,10 +39,10 @@ export const ItemsContext = createContext({
     imageUri: string;
     description: string;
     category: string;
-    vendorId: number;
+    vendorId: string;
   }) => {},
   updateItem: (item: Item) => {},
-  deleteItem: (itemId: number) => {},
+  deleteItem: (itemId: string) => {},
 });
 
 // Discriminated union
@@ -62,7 +62,7 @@ type ItemAction =
   | {
       type: "DELETE";
       payload: {
-        itemId: number;
+        itemId: string;
       };
     }
   | {
@@ -101,37 +101,35 @@ function itemReducer(state: Item[], action: ItemAction): Item[] {
 
 function ItemsContextProvider({ children }: { children: React.ReactNode }) {
   const [itemsState, dispatch] = useReducer(itemReducer, [] as Item[]);
-  const [userCreatedItems, setUserCreatedItems] = useState([] as Item[]);
+  const [userCreatedItems, setUserCreatedItems] = useState<Item[]>(
+    [] as Item[]
+  );
+
+  // const [userCreatedItems, setUserCreatedItems] = useState([] as Item[]);
   const authCtx = useContext(AuthContext);
-  const db = useSQLiteContext();
+  authCtx.userId;
 
   useEffect(() => {
     async function fetchAllItems() {
-      const temp = await db.getAllAsync<Item>("SELECT * FROM Items ");
+      const temp = await firebaseServices.getAllItems();
       dispatch({
         type: "INIT",
         payload: {
           items: temp,
         },
       });
+
+      if (authCtx.userId !== "") {
+        const createdItems = temp.filter(
+          (item) => item.vendorId === authCtx.userId
+        );
+
+        setUserCreatedItems(createdItems);
+      }
     }
 
     fetchAllItems();
   }, []);
-
-  useEffect(() => {
-    async function fetchUserItems(userId: number) {
-      if (userId === -1) return;
-
-      const temp = await db.getAllAsync<Item>(
-        "SELECT * FROM Items WHERE vendorId = ?",
-        [userId]
-      );
-      setUserCreatedItems(temp);
-    }
-
-    fetchUserItems(authCtx.userId);
-  }, [authCtx.userId, itemsState.length]);
 
   async function addItem({
     name,
@@ -146,68 +144,40 @@ function ItemsContextProvider({ children }: { children: React.ReactNode }) {
     imageUri: string;
     description: string;
     category: string;
-    vendorId: number;
+    vendorId: string;
   }) {
-    const result = await db.runAsync(
-      "INSERT INTO Items (name,cost,imageUri , description, category, vendorId) VALUES (?,?,?,?,?,?)",
-      [
-        name.trim(),
-        cost,
-        imageUri.trim(),
-        description.trim(),
-        category.trim(),
-        vendorId,
-      ]
-    );
-    console.log(result);
-    if (result.changes > 0) {
-      dispatch({
-        type: "ADD",
-        payload: {
-          item: {
-            name: name.trim(),
-            cost: cost,
-            imageUri: imageUri.trim(),
-            description: description.trim(),
-            category: category.trim(),
-            vendorId: vendorId,
-            id: result.lastInsertRowId,
-          },
-        },
-      });
-    }
+    const newItem = await firebaseServices.createItem({
+      name: name.trim(),
+      cost: cost,
+      imageUri: imageUri.trim(),
+      description: description.trim(),
+      category: category.trim(),
+      vendorId: vendorId,
+    });
+
+    dispatch({
+      type: "ADD",
+      payload: {
+        item: newItem,
+      },
+    });
   }
 
   // updateItem function will be called only by the user who has created i.e the one whose id  == vendorId
 
   const updateItem = async (item: Item) => {
-    const result = await db.runAsync(
-      "UPDATE Items SET name = ?, cost = ? , imageUri = ?, description = ?, category = ? WHERE id = ?",
-      [
-        item.name,
-        item.cost,
-        item.imageUri,
-        item.description,
-        item.category,
-        item.id,
-      ]
-    );
-    if (result.changes > 0) {
-      dispatch({
-        type: "UPDATE",
-        payload: { item: item },
-      });
-    }
+    await firebaseServices.updateItem(item);
+
+    dispatch({
+      type: "UPDATE",
+      payload: { item: item },
+    });
   };
 
-  async function deleteItem(itemId: number) {
-    const result = await db.runAsync("DELETE FROM Items WHERE id = ?", [
-      itemId,
-    ]);
-    console.log(result);
+  async function deleteItem(itemId: string) {
+    firebaseServices.deleteItem(itemId);
 
-    if (result.changes > 0)
-      dispatch({ type: "DELETE", payload: { itemId: itemId } });
+    dispatch({ type: "DELETE", payload: { itemId: itemId } });
   }
 
   const value = {

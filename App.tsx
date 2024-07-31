@@ -13,7 +13,6 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import All from "./screens/HomeOverview/All";
 import Audio from "./screens/HomeOverview/Audio";
 import Drones from "./screens/HomeOverview/Drones";
-import Gaming from "./screens/HomeOverview/Furniture";
 import PC from "./screens/HomeOverview/PC";
 import Video from "./screens/HomeOverview/Sports";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -21,9 +20,9 @@ import ItemCategory from "./screens/BrowseOverview/ItemCategory";
 import ItemDetails from "./screens/BrowseOverview/ItemDetails";
 import SignUp from "./screens/AuthScreens/SignUp";
 import Login from "./screens/AuthScreens/Login";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
-import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
+import { SQLiteDatabase, SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import ItemsContextProvider from "./store/item-context";
 import UsersContextProvider, { UsersContext } from "./store/user-context";
 import MyProducts from "./screens/ProfileScreens/MyProducts";
@@ -34,6 +33,8 @@ import FavouriteItemsContextProvider from "./store/favourite-context";
 import EditProduct from "./screens/ProfileScreens/EditProduct";
 import Sports from "./screens/HomeOverview/Sports";
 import Furniture from "./screens/HomeOverview/Furniture";
+import { database } from "./firebaseConfig";
+import { ref, set, onValue } from "firebase/database";
 
 const bottomTab = createBottomTabNavigator();
 const topTab = createMaterialTopTabNavigator();
@@ -83,7 +84,6 @@ async function init(db: SQLiteDatabase) {
             PRIMARY KEY(userId, itemId) 
         )`);
 }
-
 function ProfileScreens() {
   return (
     <ProfileStack.Navigator initialRouteName="Profile">
@@ -209,6 +209,12 @@ function Navigation() {
   } else {
     title = title + "There";
   }
+  const db = useSQLiteContext();
+
+  useEffect(() => {
+    // Example of writing data to Firebase
+    migrateData(db);
+  }, []);
 
   return (
     <ItemsContextProvider>

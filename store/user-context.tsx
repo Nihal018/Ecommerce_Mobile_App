@@ -1,17 +1,11 @@
 import { useReducer, createContext, useEffect } from "react";
 import { User } from "../models/User";
-import { useSQLiteContext } from "expo-sqlite";
+import { firebaseServices } from "../util/firebaseSDK";
 
 export const UsersContext = createContext({
   users: [] as User[],
-  addUser: (details: {
-    name: string;
-    description: string;
-    email: string;
-    firebaseId: string;
-  }) => {},
   updateUser: (user: User) => {},
-  deleteUser: (userId: number) => {},
+  deleteUser: (userId: string) => {},
 });
 
 type UserAction =
@@ -22,15 +16,9 @@ type UserAction =
       };
     }
   | {
-      type: "ADD";
-      payload: {
-        user: User;
-      };
-    }
-  | {
       type: "DELETE";
       payload: {
-        userId: number;
+        userId: string;
       };
     }
   | {
@@ -42,10 +30,6 @@ type UserAction =
 
 function userReducer(state: User[], action: UserAction): User[] {
   switch (action.type) {
-    case "ADD":
-      console.log("Newly created user =", action.payload.user);
-      return [...state, action.payload.user];
-
     case "UPDATE":
       const updatedUserIndex = state.findIndex(
         (user: User) => user.id === action.payload.user.id
@@ -70,11 +54,10 @@ function userReducer(state: User[], action: UserAction): User[] {
 
 function UsersContextProvider({ children }: { children: React.ReactNode }) {
   const [usersState, dispatch] = useReducer(userReducer, [] as User[]);
-  const db = useSQLiteContext();
 
   useEffect(() => {
     async function fetchUsers() {
-      const temp = await db.getAllAsync<User>("SELECT * FROM Users ");
+      const temp = await firebaseServices.getAllUsers();
       dispatch({
         type: "INIT",
         payload: {
@@ -86,69 +69,26 @@ function UsersContextProvider({ children }: { children: React.ReactNode }) {
     fetchUsers();
   }, []);
 
-  async function addUser({
-    name,
-    description,
-    firebaseId,
-    email,
-  }: {
-    name: string;
-    description: string;
-    firebaseId: string;
-    email: string;
-  }) {
-    const result = await db.runAsync(
-      "INSERT INTO Users (name , description, email ,firebaseId) VALUES (?,?,?,?)",
-      [name, description, email, firebaseId]
-    );
-    console.log(result);
-
-    if (result.changes > 0) {
-      dispatch({
-        type: "ADD",
-        payload: {
-          user: {
-            name: name,
-            description: description,
-            email: email,
-            id: result.lastInsertRowId,
-            firebaseId: firebaseId,
-          },
-        },
-      });
-    }
-  }
-
   async function updateUser(user: User) {
-    const result = await db.runAsync(
-      "UPDATE Users SET name = ?,  description = ?, email = ? WHERE id = ?",
-      [user.name, user.description, user.email, user.id]
-    );
+    await firebaseServices.updateUser(user);
 
-    if (result.changes > 0) {
-      dispatch({
-        type: "UPDATE",
-        payload: { user: user },
-      });
-    }
+    dispatch({
+      type: "UPDATE",
+      payload: { user: user },
+    });
   }
 
-  async function deleteUser(userId: number) {
-    const result = await db.runAsync("DELETE FROM Users WHERE id = ?", [
-      userId,
-    ]);
+  async function deleteUser(userId: string) {
+    await firebaseServices.deleteUser(userId);
 
-    if (result.changes > 0) {
-      dispatch({
-        type: "DELETE",
-        payload: { userId: userId },
-      });
-    }
+    dispatch({
+      type: "DELETE",
+      payload: { userId: userId },
+    });
   }
 
   const value = {
     users: usersState,
-    addUser: addUser,
     updateUser: updateUser,
     deleteUser: deleteUser,
   };

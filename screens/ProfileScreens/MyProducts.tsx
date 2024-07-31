@@ -111,9 +111,7 @@ function ProductCard({
 export default function MyProducts({ navigation, route }) {
   const itemCtx = useContext(ItemsContext);
   const userId = route.params.userId;
-  const [userCreatedItems, setUserCreatedItems] = useState<Item[]>(
-    itemCtx.userCreatedItems
-  );
+  const [userCreatedItems, setUserCreatedItems] = useState<Item[]>([]);
 
   useEffect(() => {
     setUserCreatedItems(itemCtx.userCreatedItems);
@@ -146,7 +144,7 @@ export default function MyProducts({ navigation, route }) {
             <ProductCard
               item={item}
               deleteHandler={deleteHandler}
-              goToDetails={goToDetails}
+               goToDetails={goToDetails}
             />
           )}
           initialNumToRender={10}
@@ -156,13 +154,13 @@ export default function MyProducts({ navigation, route }) {
         <Pressable
           style={({ pressed }) => [pressed && styles.pressed, styles.login]}
           onPress={() => {
-            goToAddProduct();
+            goToAddProduct();    
           }}
           android_ripple={{ color: "rgba(250,250,250,0.8)" }}
         >
           <Text className="text-white font-bold text-center">Add Items</Text>
         </Pressable>
-      </View>
+      </View>      
     </View>
   );
 }

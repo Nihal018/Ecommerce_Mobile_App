@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
-import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { createUser } from "../../util/auth";
+import { Alert } from "react-native";
+
 import { AuthContext } from "../../store/auth-context";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import SignupForm from "../../components/Auth/SignupForm";
 import ValidateContent from "../../components/Auth/ValidateContent";
 import { UsersContext } from "../../store/user-context";
+import { firebaseServices } from "../../util/firebaseSDK";
 
 export default function SignUp({ navigation }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -25,22 +25,11 @@ export default function SignUp({ navigation }) {
   }) {
     setIsAuthenticating(true);
     try {
-      const res = await createUser(email, password);
+      const res = await firebaseServices.signUp(email, password, userName, "");
       // add function to add user to user context and sqllite
-      UserCtx.addUser({
-        name: userName,
-        email: email,
-        description: "",
-        firebaseId: res.localId,
-      });
 
-      const UserIndex = UserCtx.users.findIndex(
-        (user) => user.firebaseId === res.localId
-      );
-
-      const userId = UserCtx.users[UserIndex].id;
-
-      authCtx.authenticate(res.token, res.localId, userId);
+      authCtx.authenticate(res.id);
+      setIsAuthenticating(false);
     } catch (error) {
       Alert.alert(
         "Authentication failed",
