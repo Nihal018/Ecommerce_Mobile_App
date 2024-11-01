@@ -1,10 +1,12 @@
-import { useReducer, createContext, useEffect } from "react";
-import { useSQLiteContext } from "expo-sqlite";
+import { useReducer, createContext, useEffect, useContext } from "react";
+
 import { CartItem } from "../models/CartItem";
+import { firebaseServices } from "../util/firebaseSDK";
+import { AuthContext } from "./auth-context";
 export const CartContext = createContext({
   cartItems: [] as CartItem[],
-  addCartItem: (details: { userId: number; itemId: number }) => {},
-  deleteCartItem: (details: { userId: number; itemId: number }) => {},
+  addCartItem: (details: { userId: string; itemId: string }) => {},
+  deleteCartItem: (details: { userId: string; itemId: string }) => {},
 });
 
 // Discriminated union
@@ -52,11 +54,11 @@ function itemReducer(state: CartItem[], action: ItemAction): CartItem[] {
 
 function CartItemsContextProvider({ children }: { children: React.ReactNode }) {
   const [itemsState, dispatch] = useReducer(itemReducer, [] as CartItem[]);
-  const db = useSQLiteContext();
+  const authCtx = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchAllItems() {
-      const temp = await db.getAllAsync<CartItem>("SELECT * FROM CartItems");
+      const temp = await firebaseServices.getCart(authCtx.userId);
       dispatch({
         type: "INIT",
         payload: {
@@ -64,46 +66,47 @@ function CartItemsContextProvider({ children }: { children: React.ReactNode }) {
         },
       });
     }
-    fetchAllItems();
+
+    if (authCtx.isAuthenticated) fetchAllItems();
+    else {
+      dispatch({
+        type: "INIT",
+        payload: {
+          CartItems: [],
+        },
+      });
+    }
   }, []);
 
   async function addCartItem({
     userId,
     itemId,
   }: {
-    userId: number;
-    itemId: number;
+    userId: string;
+    itemId: string;
   }) {
-    const result = await db.runAsync(
-      "INSERT INTO CartItems (userId,itemId) VALUES (?,?)",
-      [userId, itemId]
-    );
-    console.log(result);
-    if (result.changes > 0) {
-      dispatch({
-        type: "ADD",
-        payload: {
-          CartItem: {
-            userId: userId,
-            itemId: itemId,
-          },
+    await firebaseServices.addToCart(userId, itemId);
+    dispatch({
+      type: "ADD",
+      payload: {
+        CartItem: {
+          userId: userId,
+          itemId: itemId,
         },
-      });
-    }
+      },
+    });
   }
 
-  async function deleteCartItem(CartItem: CartItem) {
-    const result = await db.runAsync(
-      "DELETE FROM CartItems WHERE itemId = ? AND userId = ?",
-      [CartItem.itemId, CartItem.userId]
+  async function deleteCartItem(cartItem: CartItem) {
+    const result = await firebaseServices.removeFromCart(
+      cartItem.userId,
+      cartItem.itemId
     );
-    console.log(result);
 
-    if (result.changes > 0)
-      dispatch({
-        type: "DELETE",
-        payload: { CartItem: CartItem },
-      });
+    dispatch({
+      type: "DELETE",
+      payload: { CartItem: cartItem },
+    });
   }
 
   const value = {

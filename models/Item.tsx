@@ -1,22 +1,22 @@
 import { User } from "./User";
 
 export class Item {
-  id: number;
+  id: string;
   description: string;
   name: string;
   imageUri: string;
   cost: number;
   category: string;
-  vendorId: number;
+  vendorId: string;
 
   constructor(
-    id: number,
+    id: string,
     name: string,
     cost: number,
     imageUri: string,
     description: string,
     category: string,
-    vendorId: number
+    vendorId: string
   ) {
     this.id = id;
     this.imageUri = imageUri;

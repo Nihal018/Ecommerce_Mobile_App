@@ -4,10 +4,7 @@ import { Item } from "../../models/Item";
 import CardList from "../../components/CardList";
 import { useContext } from "react";
 import { ItemsContext } from "../../store/item-context";
-import { FavouriteContext } from "../../store/favourite-context";
-import { CartContext } from "../../store/cart-context";
 import { AuthContext } from "../../store/auth-context";
-import { UsersContext } from "../../store/user-context";
 
 export default function All({ navigation }) {
   const ItemCtx = useContext(ItemsContext);

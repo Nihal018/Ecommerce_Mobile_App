@@ -1,8 +1,8 @@
 export class FavouriteItem {
-  userId: number;
-  itemId: number;
+  userId: string;
+  itemId: string;
 
-  constructor(userId: number, itemId: number) {
+  constructor(userId: string, itemId: string) {
     this.userId = userId;
     this.itemId = itemId;
   }

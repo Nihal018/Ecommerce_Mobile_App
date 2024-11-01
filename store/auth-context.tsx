@@ -1,42 +1,26 @@
-import AsyncStorage from "@react-native-async-storage/async-storage"; // can only store string data
-import { useSQLiteContext } from "expo-sqlite";
-
-import { createContext, useContext, useEffect, useState } from "react";
-import { UsersContext } from "./user-context";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext({
-  token: "",
-  userFirebaseId: "",
-  userId: -1,
+  userId: "",
   isAuthenticated: false,
-  authenticate: (token: string, firebaseId: string, userId: number) => {},
+  authenticate: (userId: string) => {},
   logout: () => {},
 });
 
-function AuthContextProvider({ children }) {
-  const [authToken, setAuthToken] = useState("");
-  const [userFirebaseId, setUserFirebaseId] = useState("");
-  const [userId, setUserId] = useState(-1);
+function AuthContextProvider({ children }: { children: React.ReactNode }) {
+  const [userId, setUserId] = useState("");
 
-  function authenticate(token: string, firebaseId: string, userId: number) {
-    setAuthToken(token);
-    setUserFirebaseId(firebaseId);
+  function authenticate(userId: string) {
     setUserId(userId);
-    AsyncStorage.setItem("token", token);
   }
 
   function logout() {
-    setAuthToken("");
-    setUserFirebaseId("");
-    setUserId(-1);
-    AsyncStorage.removeItem("token");
+    setUserId("");
   }
 
   const value = {
-    token: authToken,
-    userFirebaseId: userFirebaseId,
     userId: userId,
-    isAuthenticated: !!authToken,
+    isAuthenticated: userId === "" ? false : true,
     authenticate: authenticate,
     logout: logout,
   };

@@ -1,10 +1,12 @@
-import { useReducer, createContext, useEffect } from "react";
-import { useSQLiteContext } from "expo-sqlite";
+import { useReducer, createContext, useEffect, useContext } from "react";
+
 import { FavouriteItem } from "../models/FavouriteItem";
+import { AuthContext } from "./auth-context";
+import { firebaseServices } from "../util/firebaseSDK";
 export const FavouriteContext = createContext({
   favouriteItems: [] as FavouriteItem[],
-  addFavouriteItem: (details: { userId: number; itemId: number }) => {},
-  deleteFavouriteItem: (details: { userId: number; itemId: number }) => {},
+  addFavouriteItem: (details: { userId: string; itemId: string }) => {},
+  deleteFavouriteItem: (details: { userId: string; itemId: string }) => {},
 });
 
 // Discriminated union
@@ -59,13 +61,11 @@ function FavouriteItemsContextProvider({
   children: React.ReactNode;
 }) {
   const [itemsState, dispatch] = useReducer(itemReducer, [] as FavouriteItem[]);
-  const db = useSQLiteContext();
+  const authCtx = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchAllItems() {
-      const temp = await db.getAllAsync<FavouriteItem>(
-        "SELECT * FROM FavouriteItems "
-      );
+      const temp = await firebaseServices.getFavourites(authCtx.userId);
       dispatch({
         type: "INIT",
         payload: {
@@ -73,52 +73,50 @@ function FavouriteItemsContextProvider({
         },
       });
     }
-    fetchAllItems();
+
+    if (authCtx.isAuthenticated) fetchAllItems();
+    else {
+      dispatch({
+        type: "INIT",
+        payload: {
+          FavouriteItems: [],
+        },
+      });
+    }
   }, []);
 
   async function addFavouriteItem({
     userId,
     itemId,
   }: {
-    userId: number;
-    itemId: number;
+    userId: string;
+    itemId: string;
   }) {
-    const result = await db.runAsync(
-      "INSERT INTO FavouriteItems (userId,itemId) VALUES (?,?)",
-      [userId, itemId]
-    );
-    console.log(result);
-    if (result.changes > 0) {
-      dispatch({
-        type: "ADD",
-        payload: {
-          FavouriteItem: {
-            userId: userId,
-            itemId: itemId,
-          },
+    await firebaseServices.addToFavourites(userId, itemId);
+
+    dispatch({
+      type: "ADD",
+      payload: {
+        FavouriteItem: {
+          userId: userId,
+          itemId: itemId,
         },
-      });
-    }
+      },
+    });
   }
 
   async function deleteFavouriteItem({
     userId,
     itemId,
   }: {
-    userId: number;
-    itemId: number;
+    userId: string;
+    itemId: string;
   }) {
-    const result = await db.runAsync(
-      "DELETE FROM FavouriteItems WHERE userId = ? AND itemId = ?",
-      [userId, itemId]
-    );
-    console.log(result);
-
-    if (result.changes > 0)
-      dispatch({
-        type: "DELETE",
-        payload: { FavouriteItem: { userId: userId, itemId: itemId } },
-      });
+    await firebaseServices.removeFromFavourites(userId, itemId);
+    dispatch({
+      type: "DELETE",
+      payload: { FavouriteItem: { userId: userId, itemId: itemId } },
+    });
   }
 
   const value = {

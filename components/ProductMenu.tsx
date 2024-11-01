@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export default function CustomMenu({
+export default function ProductMenu({
   visible,
   onClose,
   onEdit,
@@ -18,7 +18,7 @@ export default function CustomMenu({
   onClose: () => void;
   onEdit: () => void;
   visible: boolean;
-}) {
+}) { 
   return (
     <View style={styles.menuContainer}>
       <TouchableOpacity style={styles.menuItem} onPress={onEdit}>
@@ -38,9 +38,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 0,
     width: 105,
-    top: 35, // Adjust as necessary to position below the dots
+    top: 23, // Adjust as necessary to position below the dots
     right: 0,
-    height: 64,
+    height: 60,
     marginRight: 5,
     backgroundColor: "white",
     paddingVertical: 3,

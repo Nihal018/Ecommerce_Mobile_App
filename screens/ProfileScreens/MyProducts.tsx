@@ -13,8 +13,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Item } from "../../models/Item";
 import { AuthContext } from "../../store/auth-context";
 import { ItemsContext } from "../../store/item-context";
-import CustomMenu from "../../components/CustomMenu";
 import { useNavigation } from "@react-navigation/native";
+import ProductMenu from "../../components/ProductMenu";
 
 function ProductCard({
   item,
@@ -37,7 +37,10 @@ function ProductCard({
     navigation.navigate("EditProduct", { itemId: item.id });
   };
   return (
-    <View className="flex-1 flex-row justify-between align-middle">
+    <View
+      className="flex-1 flex-row justify-between align-middle"
+      style={{ elevation: 2 }}
+    >
       <Pressable
         onPress={() => goToDetails(item.id)}
         style={({ pressed }) => [
@@ -92,7 +95,7 @@ function ProductCard({
           </Pressable>
 
           {menuVisible && (
-            <CustomMenu
+            <ProductMenu
               visible={menuVisible}
               onClose={onClose}
               onEdit={onEditClick}
@@ -108,16 +111,13 @@ function ProductCard({
 export default function MyProducts({ navigation, route }) {
   const itemCtx = useContext(ItemsContext);
   const userId = route.params.userId;
-
-  const [products, setProducts] = useState([] as Item[]);
+  const [userCreatedItems, setUserCreatedItems] = useState<Item[]>([]);
 
   useEffect(() => {
-    const items = itemCtx.items.filter((item: Item) => {
-      return item.vendorId === userId;
-    });
-
-    setProducts(items);
-  }, [itemCtx.items, userId]);
+    setUserCreatedItems(itemCtx.userCreatedItems);
+    console.log(itemCtx.userCreatedItems.length);
+    console.log(userCreatedItems.length);
+  }, [itemCtx.userCreatedItems]);
 
   const goToDetails = (itemId: number) => {
     navigation.navigate("BrowseOverview", {
@@ -138,13 +138,13 @@ export default function MyProducts({ navigation, route }) {
     <View className="bg-white w-full h-full">
       <View style={{ height: 520 }}>
         <FlatList
-          data={products}
+          data={userCreatedItems}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ProductCard
               item={item}
               deleteHandler={deleteHandler}
-              goToDetails={goToDetails}
+               goToDetails={goToDetails}
             />
           )}
           initialNumToRender={10}
@@ -154,13 +154,13 @@ export default function MyProducts({ navigation, route }) {
         <Pressable
           style={({ pressed }) => [pressed && styles.pressed, styles.login]}
           onPress={() => {
-            goToAddProduct();
+            goToAddProduct();    
           }}
           android_ripple={{ color: "rgba(250,250,250,0.8)" }}
         >
           <Text className="text-white font-bold text-center">Add Items</Text>
         </Pressable>
-      </View>
+      </View>      
     </View>
   );
 }
@@ -239,6 +239,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 50,
     paddingRight: 5,
+    elevation: 2,
   },
 
   itemContainer: {
